@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full"> <!-- A classe 'dark' será adicionada aqui pelo JavaScript -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Mono Navigation Menu for Notion</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: IBM Plex Mono and Inter (fallback) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', /* ...outras fontes sans-serif */ ],
+                        mono: ['"IBM Plex Mono"', 'ui-monospace', /* ...outras fontes mono */ ],
+                    },
+                    colors: {
+                        slate: { // Paleta similar ao Notion
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8',
+                            500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        html, body {
+            height: 100%; 
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            /* overflow: hidden; /* Mantido comentado para permitir rolagem se o menu for vertical e longo */
+        }
+        /* Estilo base para os ícones do Font Awesome */
+        .navMenu a i {
+            @apply mr-2 w-4 text-center; /* Espaçamento e largura fixa para alinhamento */
+        }
+    </style>
+    <script>
+        // Aplica tema claro/escuro
+        (function() {
+            function applyTheme() {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            applyTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        })();
+    </script>
+</head>
+<body class="bg-white dark:bg-slate-900 font-mono text-slate-800 dark:text-slate-200 flex items-center justify-center p-2 sm:p-4 transition-colors duration-300">
+    <!-- Wrapper para permitir que o menu tenha 'width: fit-content' efetivamente com Tailwind e centralização -->
+    <div id="navWrapper" class="w-full flex justify-center sm:w-auto">
+        <nav id="navMenu" class="navMenu bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-sm p-1.5 sm:p-2 flex flex-wrap justify-center"> 
+            <a id="goals" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-house"></i> Goals Hub</a>
+            <a id="planning" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-inbox"></i> Planning Hub</a>
+            <a id="health" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-calendar-week"></i> Health Hub</a>
+            <a id="finance" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-briefcase"></i> Finance Hub</a>
+            <a id="personal" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-list-check"></i> Personal Hub</a>
+        </nav>
+    </div>
+
+    <style type="text/tailwindcss">
+        @layer components {
+            .nav-item {
+                @apply p-2 sm:py-1.5 sm:px-2.5 text-sm uppercase tracking-wider
+                       text-slate-700 dark:text-slate-300 
+                       hover:bg-slate-100 dark:hover:bg-slate-700 
+                       hover:text-slate-900 dark:hover:text-slate-100
+                       rounded-md transition-colors duration-150 ease-in-out
+                       flex items-center; /* Para alinhar ícone e texto */
+            }
+        }
+    </style>
+
+    <script>
+        // Defina 'vertical' ou 'horizontal'.
+        let direction = "horizontal"; // Mude para "vertical" para layout de coluna
+
+        const navMenuElement = document.getElementById('navMenu');
+        const navWrapperElement = document.getElementById('navWrapper');
+
+        if (direction === "vertical") {
+            navMenuElement.classList.remove('flex-wrap', 'justify-center');
+            navMenuElement.classList.add('flex-col', 'items-start', 'w-full', 'sm:w-auto', 'sm:min-w-[200px]');
+            navWrapperElement.classList.remove('sm:w-auto', 'justify-center'); // Remove justify-center do wrapper no modo vertical
+             navWrapperElement.classList.add('w-full', 'sm:w-auto'); // Garante que o wrapper possa ter largura auto ou full
+            
+            document.querySelectorAll('.navMenu a').forEach(link => {
+                link.classList.add('w-full', 'my-0.5');
+            });
+        } else { // Horizontal (padrão)
+            navMenuElement.classList.add('flex-wrap', 'justify-center');
+            // Wrapper já está configurado para centralizar no modo horizontal.
+        }
+
+        function navigate(id) {
+            const urls = {
+                goals: "https://example.com/home",
+                planning: "https://example.com/inbox",
+                health: "/Health-Hub-1eb03a8d99ab8037a458f298b233090c",
+                finance: "https://example.com/projects",
+                personal: "https://example.com/tasks",
+            };
+            if (urls[id]) {
+                window.open(urls[id], '_blank').focus();
+            } else {
+                console.warn("No URL defined for ID:", id);
+            }
+        }
+    </script>
+</body>
+</html>

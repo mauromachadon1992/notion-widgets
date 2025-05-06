@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Mono Marquee Greeting Widget</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Import: Inter (for body fallback) and IBM Plex Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif'],
+                        mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'], // Prioritize IBM Plex Mono
+                    },
+                    colors: {
+                        slate: { // Notion-like palette
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8',
+                            500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617',
+                        }
+                    },
+                    animation: {
+                        'scroll-left': 'scroll-left 25s linear infinite', // Adjusted duration slightly for mono readability
+                    },
+                    keyframes: {
+                        'scroll-left': {
+                            '0%': { transform: 'translateX(100%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .marquee-content > * {
+            pointer-events: none;
+        }
+    </style>
+    <script>
+        (function() {
+            function applyTheme() {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            applyTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        })();
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 flex items-center justify-center font-sans transition-colors duration-300">
+
+    <div class="greeting-widget w-full h-full flex items-center justify-start
+                bg-white dark:bg-slate-800 
+                text-slate-700 dark:text-slate-200 
+                p-[2vmin] sm:p-[3vmin] rounded-none sm:rounded-lg 
+                shadow-none sm:shadow-lg 
+                border-none sm:border border-slate-200 dark:border-slate-700 
+                transition-colors duration-300
+                overflow-x-hidden whitespace-nowrap font-mono">
+
+        <div class="marquee-content inline-flex items-baseline animate-scroll-left space-x-[5vmin] py-[1vmin]"> 
+            
+            <div id="greet" class="shrink-0" style="font-size: 5vmin; line-height: 1; font-weight: 500;">
+                {/* Greeting */}
+            </div>
+
+            <div id="date" class="shrink-0" style="font-size: 4.5vmin; line-height: 1;"> 
+                {/* Date */}
+            </div>
+
+            <div class="clock flex items-baseline shrink-0" style="font-size: 4.5vmin; line-height: 1;">
+                <div class="time" id="hour"></div>
+                <div class="colon mx-[0.5vmin]">:</div>
+                <div class="time" id="min"></div>
+                <div class="colon mx-[0.5vmin]">:</div>
+                <div class="time" id="sec" class="text-[3.5vmin] self-end pb-[0.2vmin]"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript logic for date, time, and greeting (same as previous version)
+        function updateDate() {
+            var today = new Date();
+            document.getElementById('date').innerHTML = today.toDateString().toUpperCase(); // Uppercase for mono aesthetic
+        }
+
+        function updateClock() {
+            var today = new Date();
+            var hour = zeros(twelveHour(today.getHours()));
+            var minutes = zeros(today.getMinutes());
+            var seconds = zeros(today.getSeconds());
+            var ampm = today.getHours() >= 12 ? "PM" : "AM"; // Uppercase AM/PM
+            
+            var greetText = '';
+            var hrs = today.getHours();
+            if (hrs < 12) {
+                greetText = 'Good Morning';
+            } else if (hrs >= 12 && hrs < 17) {
+                greetText = 'Good Afternoon';
+            } else {
+                greetText = 'Good Evening';
+            }
+            
+            document.getElementById('greet').innerHTML = greetText.toUpperCase(); // Uppercase for mono aesthetic
+            document.getElementById('hour').innerHTML = hour;
+            document.getElementById('min').innerHTML = minutes;
+            // Adjusted AM/PM span for better alignment with mono font
+            document.getElementById('sec').innerHTML = seconds + `<span class="text-[2.8vmin] ml-[0.7vmin] align-baseline">${ampm}</span>`;
+        }
+
+        function twelveHour(hour) {
+            if (hour > 12) { return hour - 12; }
+            else if (hour === 0) { return 12; }
+            else { return hour; }
+        }
+            
+        function zeros(num) {
+            if (num < 10) { return '0' + num; }
+            return num;
+        }
+
+        function dateTime() {
+            updateDate();
+            updateClock();
+            setTimeout(dateTime, 500);
+        }
+
+        dateTime();
+    </script>
+
+</body>
+</html>

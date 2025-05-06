@@ -19,11 +19,11 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui',],
-                        mono: ['"IBM Plex Mono"', 'ui-monospace',],
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', /* ...outras fontes sans-serif */ ],
+                        mono: ['"IBM Plex Mono"', 'ui-monospace', /* ...outras fontes mono */ ],
                     },
                     colors: {
-                        slate: { 
+                        slate: { // Paleta similar ao Notion
                             50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8',
                             500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
                         }
@@ -34,16 +34,15 @@
     </script>
     <style type="text/tailwindcss">
         html, body {
-            height: 100%;
+            height: 100%; 
             width: 100%;
             margin: 0;
             padding: 0;
-            /* overflow: hidden; /* Removido para permitir rolagem se necessário, especialmente no modo vertical */
+            /* overflow: hidden; /* Mantido comentado para permitir rolagem se o menu for vertical e longo */
         }
-
         /* Estilo base para os ícones do Font Awesome */
         .navMenu a i {
-            @apply mr-2 w-4 text-center; 
+            @apply mr-2 w-4 text-center; /* Espaçamento e largura fixa para alinhamento */
         }
     </style>
     <script>
@@ -62,10 +61,9 @@
     </script>
 </head>
 <body class="bg-white dark:bg-slate-900 font-mono text-slate-800 dark:text-slate-200 flex items-center justify-center p-2 sm:p-4 transition-colors duration-300">
-    <!-- Wrapper para permitir que o menu tenha 'width: fit-content' efetivamente com Tailwind -->
-    <div id="navWrapper" class="w-full sm:w-auto"> 
+    <!-- Wrapper para permitir que o menu tenha 'width: fit-content' efetivamente com Tailwind e centralização -->
+    <div id="navWrapper" class="w-full flex justify-center sm:w-auto">
         <nav id="navMenu" class="navMenu bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-sm p-1.5 sm:p-2 flex flex-wrap justify-center"> 
-            <!-- Itens do Menu -->
             <a id="home" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-house"></i> Home</a>
             <a id="inbox" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-inbox"></i> Inbox</a>
             <a id="week" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-calendar-week"></i> Planner</a>
@@ -95,24 +93,24 @@
     </style>
 
     <script>
-        // Defina 'vertical' ou 'horizontal'. Para horizontal, os itens podem quebrar linha.
+        // Defina 'vertical' ou 'horizontal'.
         let direction = "horizontal"; // Mude para "vertical" para layout de coluna
 
         const navMenuElement = document.getElementById('navMenu');
-        const navWrapperElement = document.getElementById('navWrapper'); // Obter referência ao wrapper
+        const navWrapperElement = document.getElementById('navWrapper');
 
         if (direction === "vertical") {
             navMenuElement.classList.remove('flex-wrap', 'justify-center');
             navMenuElement.classList.add('flex-col', 'items-start', 'w-full', 'sm:w-auto', 'sm:min-w-[200px]');
-            navWrapperElement.classList.remove('sm:w-auto'); 
-            navWrapperElement.classList.add('w-full', 'sm:w-auto'); // Garante que o wrapper possa se ajustar no modo vertical
+            navWrapperElement.classList.remove('sm:w-auto', 'justify-center'); // Remove justify-center do wrapper no modo vertical
+             navWrapperElement.classList.add('w-full', 'sm:w-auto'); // Garante que o wrapper possa ter largura auto ou full
             
-            document.querySelectorAll('#navMenu a.nav-item').forEach(link => { // Selecionador mais específico
+            document.querySelectorAll('.navMenu a').forEach(link => {
                 link.classList.add('w-full', 'my-0.5');
             });
         } else { // Horizontal (padrão)
             navMenuElement.classList.add('flex-wrap', 'justify-center');
-             // navWrapperElement.classList.add('sm:w-auto'); // Já está no HTML, mas para garantir
+            // Wrapper já está configurado para centralizar no modo horizontal.
         }
 
         function navigate(id) {

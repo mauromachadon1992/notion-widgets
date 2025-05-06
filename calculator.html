@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- A classe 'dark' será adicionada aqui pelo JavaScript -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind CSS Calculator - Notion Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuração do Tailwind para modo escuro e para usar a fonte mono onde especificado.
+        tailwind.config = {
+            darkMode: 'class', // Habilita o modo escuro baseado na classe 'dark' no <html>
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+                        mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'],
+                    },
+                    colors: { // Paleta 'slate' é uma boa base para o estilo Notion [1]
+                        slate: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        /* Estilos personalizados adicionais ou overrides podem ir aqui, se necessário */
+        /* Para este exemplo, o foco está nas classes de utilitário do Tailwind */
+        .button > .over { /* Estilo para o símbolo de raiz quadrada (overline) */
+            text-decoration: overline;
+            display: inline-block;
+            position: relative;
+            top: 1px; 
+            left: -2px;
+        }
+    </style>
+    <script>
+        // Script para aplicar o tema claro/escuro baseado na preferência do sistema
+        // Isso deve ser executado o mais rápido possível para evitar FOUC (Flash of Unstyled Content)
+        (function() {
+            function applyTheme() {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            applyTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        })();
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 min-h-screen flex items-center justify-center p-4 font-sans transition-colors duration-300">
+
+    <div class="calculator bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 w-full max-w-xs font-mono">
+        <input type="text" id="screen" class="w-full mb-5 p-3 text-3xl text-right bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 transition-colors duration-300" readonly>
+        
+        <div class="grid grid-cols-4 gap-2">
+            <!-- Linha 1 -->
+            <button class="button btn-op text-lg p-3 sm:p-3.5">(</button>
+            <button class="button btn-op text-lg p-3 sm:p-3.5">)</button>
+            <button class="button btn-op text-lg p-3 sm:p-3.5">%</button>
+            <button class="button btn-ac text-lg p-3 sm:p-3.5">AC</button>
+            
+            <!-- Linha 2 -->
+            <button class="button btn-op text-lg p-3 sm:p-3.5">x^</button>
+            <button class="button btn-num p-3 sm:p-3.5">7</button>
+            <button class="button btn-num p-3 sm:p-3.5">8</button>
+            <button class="button btn-num p-3 sm:p-3.5">9</button>
+
+            <!-- Linha 3 -->
+            <button class="button btn-op text-lg p-3 sm:p-3.5">&radic;<span class="over"></span></button>
+            <button class="button btn-num p-3 sm:p-3.5">4</button>
+            <button class="button btn-num p-3 sm:p-3.5">5</button>
+            <button class="button btn-num p-3 sm:p-3.5">6</button>
+            
+            <!-- Linha 4 -->
+            <button class="button btn-op text-lg p-3 sm:p-3.5">*</button>
+            <button class="button btn-num p-3 sm:p-3.5">1</button>
+            <button class="button btn-num p-3 sm:p-3.5">2</button>
+            <button class="button btn-num p-3 sm:p-3.5">3</button>
+            
+            <!-- Linha 5 -->
+            <button class="button btn-op text-lg p-3 sm:p-3.5">/</button>
+            <button class="button btn-num p-3 sm:p-3.5">0</button>
+            <button class="button btn-num p-3 sm:p-3.5">.</button>
+            <button class="button btn-op text-lg p-3 sm:p-3.5">-</button>
+            
+             <!-- Linha 6 (Nova linha para + e =) -->
+            <button class="button btn-op col-span-2 text-lg p-3 sm:p-3.5">+</button>
+            <button class="button btn-equals col-span-2 text-lg p-3 sm:p-3.5">=</button>
+        </div>
+    </div>
+
+    <style type="text/tailwindcss">
+        @layer components {
+            .button {
+                @apply rounded-md text-xl font-medium transition-all duration-150 ease-in-out
+                       focus:outline-none focus:ring-2 focus:ring-offset-2 
+                       dark:focus:ring-offset-slate-800 focus:ring-slate-500 dark:focus:ring-slate-400
+                       active:scale-95;
+            }
+            .btn-num { /* Botões numéricos e ponto */
+                @apply bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600
+                       text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-600;
+            }
+            .btn-op { /* Botões de operação */
+                @apply bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500
+                       text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-500;
+            }
+            .btn-ac { /* Botão AC */
+                @apply bg-slate-300 dark:bg-slate-500 hover:bg-slate-400 dark:hover:bg-slate-400
+                       text-slate-700 dark:text-slate-100 font-semibold border border-slate-400 dark:border-slate-400;
+            }
+            .btn-equals { /* Botão de igual */
+                @apply bg-slate-700 dark:bg-slate-400 hover:bg-slate-600 dark:hover:bg-slate-300
+                       text-white dark:text-slate-900 font-semibold border border-slate-700 dark:border-slate-400;
+            }
+        }
+    </style>æ
+
+    <!-- O JavaScript da lógica da calculadora permanece o mesmo -->
+    <script>
+        var display = document.getElementById("screen");
+        // Seleciona todos os botões que não são apenas para espaçamento.
+        var buttons = document.querySelectorAll(".calculator .button"); 
+        
+        Array.prototype.forEach.call(buttons, function(button) {
+        button.addEventListener("click", function() {
+            const buttonText = button.textContent.trim(); // Pega o texto do botão
+            if (buttonText === "√") { // Trata o botão de raiz quadrada
+                display.value = Math.sqrt(parseFloat(display.value));
+                return;
+            }
+
+            if (buttonText != "=" && 
+            buttonText != "AC" && 
+            buttonText != "*" && 
+            buttonText != "/" && 
+            buttonText != "+" && 
+            buttonText != "%" && 
+            buttonText != "-" && 
+            buttonText != "sin" && 
+            buttonText != "cos" && 
+            buttonText != "tan" && 
+            buttonText != "log" && 
+            buttonText != "ln" && 
+            buttonText != "x^" && 
+            buttonText != "x!" && 
+            buttonText != "pi" && 
+            buttonText != "Rad" &&
+            buttonText != "Deg") {
+            display.value += buttonText;
+            } else if (buttonText === "=") {
+            equals();
+            } else if (buttonText === "AC") {
+            clear();
+            } else if (buttonText === "*") {
+            multiply();
+            } else if (buttonText === "/") {
+            divide();
+            } else if (buttonText === "+") {
+            plus();
+            } else if (buttonText === "-") {
+            Minus();
+            } else if (buttonText === "%") {
+            percent();
+            } else if (buttonText === "pi") {
+            pi();
+            } else if (buttonText === "sin") {
+            sin();
+            } else if (buttonText === "cos") {
+            cos();
+            } else if (buttonText === "tan") {
+            tan();
+            } else if (buttonText === "log") {
+            log();
+            } else if (buttonText === "ln") {
+            ln();
+            } else if (buttonText === "x^") {
+            exponent();
+            } else if (buttonText === "x!") {
+            factorial();
+            } else if (buttonText === "Rad") {
+            radians();
+            } else if (buttonText === "Deg") {
+            degrees();
+            }
+        });
+        });
+
+        function syntaxError() {
+            try {
+                eval(display.value); 
+            } catch (e) {
+                if (e instanceof SyntaxError || e instanceof ReferenceError || e instanceof TypeError) {
+                display.value = "Syntax Error";
+                }
+            }
+        }
+
+        function equals() {
+            if ((display.value).indexOf("^") > -1) {
+                var base = (display.value).slice(0, (display.value).indexOf("^"));
+                var exponent_val = (display.value).slice((display.value).indexOf("^") + 1); 
+                try {
+                    display.value = Math.pow(parseFloat(base), parseFloat(exponent_val));
+                } catch (e) {
+                    display.value = "Error";
+                }
+            } else {
+                try {
+                    // Usar Function para uma avaliação um pouco mais segura que eval direto.
+                    display.value = new Function('return ' + display.value)();
+                } catch (e) {
+                    display.value = "Error";
+                }
+            }
+        }
+
+        function clear() {
+            display.value = "";
+        }
+
+        function multiply() {
+            display.value += "*";
+        }
+
+        function divide() {
+            display.value +=  "/";
+        }
+        function plus() {
+            display.value +=  "+";
+        }
+
+        function Minus() {
+            display.value +=  "-";
+        }
+
+        function factorial() {
+            var number = 1;
+            var val = parseFloat(display.value);
+            if (isNaN(val) || val < 0 || !Number.isInteger(val)) { 
+                display.value = "Error"; 
+                return;
+            }
+            if (val === 0) {
+                display.value = "1";
+            } else {
+                for (var i = val; i > 0; i--) {
+                number *=  i;
+                }
+                display.value = number;
+            }
+        }
+
+        function pi() {
+            if (display.value === "" || isNaN(parseFloat(display.value.slice(-1)))) { // Se vazio ou último char não é num
+                display.value += Math.PI.toFixed(8); // Adiciona PI
+            } else { // Se tem um número antes, multiplica
+                 display.value = (parseFloat(display.value) * Math.PI.toFixed(8));
+            }
+        }
+        
+        // A função de raiz quadrada foi integrada ao event listener principal.
+        // function squareRoot() {
+        //     display.value = Math.sqrt(parseFloat(display.value));
+        // }
+
+        function percent() { // % de um número, ou X % Y (para X % Y, o usuário digitaria X/100*Y)
+                            // Para simplicidade, esta função fará X -> X/100
+            display.value = parseFloat(display.value) / 100;
+        }
+
+        function sin() {
+            display.value = Math.sin(parseFloat(display.value)); 
+        }
+            
+        function cos() {
+            display.value = Math.cos(parseFloat(display.value)); 
+        }
+
+        function tan() {
+            display.value = Math.tan(parseFloat(display.value)); 
+        }
+
+        function log() { // Base 10 log
+            display.value = Math.log10(parseFloat(display.value));
+        }
+
+        function ln() { // Natural log
+            display.value = Math.log(parseFloat(display.value));
+        }
+
+        function exponent() {
+            display.value += "^";
+        }
+
+        function radians() { 
+            display.value = parseFloat(display.value) * (Math.PI / 180);
+        }
+
+        function degrees() { 
+            display.value = parseFloat(display.value) * (180 / Math.PI);
+        }
+    </script>
+</body>
+</html>

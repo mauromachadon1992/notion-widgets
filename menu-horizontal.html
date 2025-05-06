@@ -19,11 +19,11 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui', /* ...outras fontes sans-serif */ ],
-                        mono: ['"IBM Plex Mono"', 'ui-monospace', /* ...outras fontes mono */ ],
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui',],
+                        mono: ['"IBM Plex Mono"', 'ui-monospace',],
                     },
                     colors: {
-                        slate: { // Paleta similar ao Notion
+                        slate: { 
                             50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8',
                             500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
                         }
@@ -34,15 +34,15 @@
     </script>
     <style type="text/tailwindcss">
         html, body {
-            height: 100%; /* Garante que o corpo possa preencher a altura do iframe se o menu for vertical e alto */
+            height: 100%;
             width: 100%;
             margin: 0;
             padding: 0;
-            /* overflow: hidden; /* Removido para permitir rolagem se o menu for vertical e muito longo */
+            /* overflow: hidden;
         }
-        /* Estilo base para os ícones do Font Awesome */
+
         .navMenu a i {
-            @apply mr-2 w-4 text-center; /* Espaçamento e largura fixa para alinhamento */
+            @apply mr-2 w-4 text-center;
         }
     </style>
     <script>
@@ -60,7 +60,7 @@
         })();
     </script>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 font-mono text-slate-800 dark:text-slate-200 flex items-start justify-center p-2 sm:p-4 transition-colors duration-300">
+<body class="bg-white dark:bg-slate-900 font-mono text-slate-800 dark:text-slate-200 flex items-start justify-center p-2 sm:p-4 transition-colors duration-300">
     <!-- Wrapper para permitir que o menu tenha 'width: fit-content' efetivamente com Tailwind -->
     <div id="navWrapper" class="w-full sm:w-auto"> 
         <nav id="navMenu" class="navMenu bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-sm p-1.5 sm:p-2 flex flex-wrap justify-center"> 

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full"> <!-- A classe 'dark' será adicionada aqui pelo JavaScript -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Mono Navigation Menu for Notion</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: IBM Plex Mono and Inter (fallback) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', /* ...outras fontes sans-serif */ ],
+                        mono: ['"IBM Plex Mono"', 'ui-monospace', /* ...outras fontes mono */ ],
+                    },
+                    colors: {
+                        slate: { // Paleta similar ao Notion
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8',
+                            500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        html, body {
+            height: 100%; /* Garante que o corpo possa preencher a altura do iframe se o menu for vertical e alto */
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            /* overflow: hidden; /* Removido para permitir rolagem se o menu for vertical e muito longo */
+        }
+        /* Estilo base para os ícones do Font Awesome */
+        .navMenu a i {
+            @apply mr-2 w-4 text-center; /* Espaçamento e largura fixa para alinhamento */
+        }
+    </style>
+    <script>
+        // Aplica tema claro/escuro
+        (function() {
+            function applyTheme() {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            applyTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        })();
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 font-mono text-slate-800 dark:text-slate-200 flex items-start justify-center p-2 sm:p-4 transition-colors duration-300">
+    <!-- Wrapper para permitir que o menu tenha 'width: fit-content' efetivamente com Tailwind -->
+    <div id="navWrapper" class="w-full sm:w-auto"> 
+        <nav id="navMenu" class="navMenu bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-sm p-1.5 sm:p-2 flex flex-wrap justify-center"> 
+            <!-- Itens do Menu -->
+            <a id="home" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-house"></i> Home</a>
+            <a id="inbox" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-inbox"></i> Inbox</a>
+            <a id="week" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-calendar-week"></i> Planner</a>
+            <a id="projects" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-briefcase"></i> Projects</a>
+            <a id="tasks" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-list-check"></i> Tasks</a>
+            <a id="business" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-money-bill-wave"></i> Business</a>
+            <a id="knowledge" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-lightbulb"></i> Knowledge</a>
+            <a id="topics" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-layer-group"></i> Topics</a>
+            <a id="notes" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-book"></i> Notes</a>
+            <a id="media" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-bookmark"></i> Media</a>
+            <a id="resourses" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-wrench"></i> Resources</a>
+            <a id="lifewiki" onclick="navigate(this.id)" href="#" class="nav-item"> <i class="fa-solid fa-heart"></i> Lifewiki</a>
+        </nav>
+    </div>
+
+    <style type="text/tailwindcss">
+        @layer components {
+            .nav-item {
+                @apply p-2 sm:py-1.5 sm:px-2.5 text-sm uppercase tracking-wider
+                       text-slate-700 dark:text-slate-300 
+                       hover:bg-slate-100 dark:hover:bg-slate-700 
+                       hover:text-slate-900 dark:hover:text-slate-100
+                       rounded-md transition-colors duration-150 ease-in-out
+                       flex items-center; /* Para alinhar ícone e texto */
+            }
+        }
+    </style>
+
+    <script>
+        // Defina 'vertical' ou 'horizontal'. Para horizontal, os itens podem quebrar linha.
+        let direction = "horizontal"; // Mude para "vertical" para layout de coluna
+
+        const navMenuElement = document.getElementById('navMenu');
+        const navWrapperElement = document.getElementById('navWrapper');
+
+        if (direction === "vertical") {
+            navMenuElement.classList.remove('flex-wrap', 'justify-center');
+            navMenuElement.classList.add('flex-col', 'items-start', 'w-full', 'sm:w-auto', 'sm:min-w-[200px]'); // Largura total em telas pequenas, auto em maiores
+             navWrapperElement.classList.remove('sm:w-auto'); // Permite que o wrapper seja mais largo se o menu for vertical
+            
+            document.querySelectorAll('.navMenu a').forEach(link => {
+                link.classList.add('w-full', 'my-0.5'); // Ocupar largura total e pequena margem vertical
+                // O estilo do ícone já está no CSS global
+            });
+        } else { // Horizontal (padrão)
+            // As classes padrão já lidam com o layout horizontal com quebra de linha.
+            // Se quiser forçar uma única linha e permitir rolagem horizontal, precisaria de mais ajustes.
+            // Para embed, o comportamento de quebra de linha (`flex-wrap`) geralmente é preferível.
+            navMenuElement.classList.add('flex-wrap', 'justify-center');
+        }
+
+        function navigate(id) {
+            // A lógica de navegação (window.open) permanece a mesma.
+            // Exemplo simplificado:
+            const urls = {
+                home: "https://example.com/home",
+                inbox: "https://example.com/inbox",
+                week: "https://example.com/week",
+                projects: "https://example.com/projects",
+                tasks: "https://example.com/tasks",
+                business: "https://example.com/business",
+                knowledge: "https://example.com/knowledge",
+                topics: "https://example.com/topics",
+                notes: "https://example.com/notes",
+                media: "https://example.com/media",
+                resourses: "https://example.com/resources", // Corrigido 'resourses'
+                lifewiki: "https://example.com/lifewiki"
+            };
+            if (urls[id]) {
+                window.open(urls[id], '_blank').focus();
+            } else {
+                console.warn("No URL defined for ID:", id);
+            }
+        }
+    </script>
+</body>
+</html>

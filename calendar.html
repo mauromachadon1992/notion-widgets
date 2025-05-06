@@ -106,19 +106,20 @@
                 const calendarDiv = document.querySelector(".calendar-widget-container .calendar");
                 if (!calendarDiv) return;
 
+                // Removido o style="font-size: 1.8vmin;" do .calendar-inner pois os filhos definem seus próprios tamanhos.
                 calendarDiv.innerHTML = `
-                    <div class="calendar-inner w-full h-full flex flex-col" style="font-size: 1.8vmin;">
+                    <div class="calendar-inner w-full h-full flex flex-col">
                         <div class="calendar-controls flex items-center justify-between p-[1vmin] border-b border-slate-200 dark:border-slate-700" style="padding-bottom: 1.5vmin; margin-bottom: 1vmin;">
-                            <button class="calendar-prev p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Previous Month" style="font-size: 2.8vmin;">&lt;</button>
-                            <div class="calendar-year-month text-center" style="font-size: 2.8vmin; font-weight: 600;">
+                            <button class="calendar-prev p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Previous Month" style="font-size: 3.2vmin;">&lt;</button>
+                            <div class="calendar-year-month text-center" style="font-size: 3.2vmin; font-weight: 600;">
                                 <span class="calendar-month-label">${calendarControl.calMonthName[calendar.getMonth()]}</span>
                                 <span>-</span>
                                 <span class="calendar-year-label">${calendar.getFullYear()}</span>
                             </div>
-                            <button class="calendar-next p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Next Month" style="font-size: 2.8vmin;">&gt;</button>
+                            <button class="calendar-next p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Next Month" style="font-size: 3.2vmin;">&gt;</button>
                         </div>
 
-                        <div class="calendar-today-date-wrapper text-center p-[1vmin] cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors" title="Go to Today" style="font-size: 1.8vmin; margin-bottom: 1vmin;">
+                        <div class="calendar-today-date-wrapper text-center p-[1vmin] cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors" title="Go to Today" style="font-size: 2.2vmin; margin-bottom: 1vmin;">
                             TODAY: ${calendarControl.calWeekDays[calendarControl.localDate.getDay()]}, 
                             ${calendarControl.localDate.getDate()} 
                             ${calendarControl.calMonthName[calendarControl.localDate.getMonth()]} 
@@ -127,7 +128,7 @@
 
                         <div class="calendar-body grid grid-cols-7 gap-[0.5vmin] flex-grow items-stretch content-stretch">
                             ${calendarControl.calWeekDays.map(day => `
-                                <div class="day-name text-center font-semibold text-slate-500 dark:text-slate-400 py-[0.5vmin] border-b border-slate-200 dark:border-slate-600" style="font-size: 1.6vmin;">
+                                <div class="day-name text-center font-semibold text-slate-500 dark:text-slate-400 py-[0.5vmin] border-b border-slate-200 dark:border-slate-600" style="font-size: 2.2vmin;">
                                     ${day.substring(0,3)}
                                 </div>`).join('')}
                             
@@ -146,7 +147,7 @@
                 const daysInCurrentMonth = calendarControl.daysInMonth(month + 1, year);
 
                 for (let i = 0; i < firstDay; i++) {
-                    cellsHTML += `<div class="date-cell empty p-[0.5vmin] border border-transparent"></div>`; // Keep transparent border for layout consistency
+                    cellsHTML += `<div class="date-cell empty p-[0.5vmin] border border-transparent"></div>`;
                 }
 
                 for (let day = 1; day <= daysInCurrentMonth; day++) {
@@ -156,12 +157,11 @@
                     
                     let cellClasses = "date-cell flex items-center justify-center p-[0.5vmin] rounded cursor-pointer border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors";
                     if (isToday) {
-                        // For "today", border color could match accent or stay default. Keeping default for grid consistency.
                         cellClasses = "date-cell flex items-center justify-center p-[0.5vmin] rounded cursor-pointer border border-slate-200 dark:border-slate-600 calendar-today bg-accent dark:bg-accent-dark text-white font-semibold hover:bg-accent/90 dark:hover:bg-accent-dark/90";
                     }
                     
                     cellsHTML += `
-                        <div class="${cellClasses}" data-date="${day} ${calendarControl.calMonthName[month]} ${year}" style="min-height: 4vmin; font-size: 1.8vmin;">
+                        <div class="${cellClasses}" data-date="${day} ${calendarControl.calMonthName[month]} ${year}" style="min-height: 5.0vmin; font-size: 3.2vmin;">
                             <span class="date-content">${day}</span>
                         </div>`;
                 }
@@ -169,7 +169,7 @@
                 const totalCellsSoFar = firstDay + daysInCurrentMonth;
                 const remainingCells = (7 - (totalCellsSoFar % 7)) % 7;
                  for (let i = 0; i < remainingCells; i++) {
-                    cellsHTML += `<div class="date-cell empty p-[0.5vmin] border border-transparent"></div>`; // Keep transparent border for layout consistency
+                    cellsHTML += `<div class="date-cell empty p-[0.5vmin] border border-transparent"></div>`;
                 }
                 return cellsHTML;
             },

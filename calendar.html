@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Mono Calendar for Notion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Import: IBM Plex Mono and Inter (fallback) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif'],
+                        mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8',
+                            500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617',
+                        },
+                        accent: {
+                            DEFAULT: '#2196F3', // Original blue for "today"
+                            dark: '#3b82f6' 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script>
+        (function() {
+            function applyTheme() {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            applyTheme();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+        })();
+    </script>
+</head>
+<body class="bg-transparent font-sans flex items-center justify-center transition-colors duration-300">
+    <div class="calendar-widget-container w-full h-full p-[1.5vmin] bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-lg shadow-lg font-mono">
+        <div class="calendar w-full h-full flex flex-col"></div>
+    </div>
+
+    <script>
+    function CalendarControl() {
+        const calendar = new Date();
+        const calendarControl = {
+            localDate: new Date(),
+            calWeekDays: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], // Uppercase
+            calMonthName: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], // Uppercase
+            
+            daysInMonth: function(month, year) {
+                return new Date(year, month, 0).getDate();
+            },
+            firstDay: function() {
+                return new Date(calendar.getFullYear(), calendar.getMonth(), 1);
+            },
+            firstDayNumber: function() {
+                return calendarControl.firstDay().getDay();
+            },
+            
+            navigateToPreviousMonth: function(event) {
+                event.preventDefault();
+                calendar.setMonth(calendar.getMonth() - 1);
+                calendarControl.renderCalendar();
+            },
+            navigateToNextMonth: function(event) {
+                event.preventDefault();
+                calendar.setMonth(calendar.getMonth() + 1);
+                calendarControl.renderCalendar();
+            },
+            navigateToCurrentMonth: function(event) {
+                event.preventDefault();
+                calendar.setTime(calendarControl.localDate.getTime());
+                calendarControl.renderCalendar();
+            },
+            
+            selectDate: function(e) {
+                const dateStr = e.currentTarget.dataset.date;
+                if (!dateStr) return;
+                const [day, monthName, year] = dateStr.split(' ');
+                console.log(`Selected: ${day} ${monthName} ${year}`);
+            },
+
+            renderCalendar: function() {
+                const calendarDiv = document.querySelector(".calendar-widget-container .calendar");
+                if (!calendarDiv) return;
+
+                calendarDiv.innerHTML = `
+                    <div class="calendar-inner w-full h-full flex flex-col" style="font-size: 1.8vmin;">
+                        <div class="calendar-controls flex items-center justify-between p-[1vmin] border-b border-slate-200 dark:border-slate-700" style="padding-bottom: 1.5vmin; margin-bottom: 1vmin;">
+                            <button class="calendar-prev p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Previous Month" style="font-size: 2.8vmin;">&lt;</button>
+                            <div class="calendar-year-month text-center" style="font-size: 2.8vmin; font-weight: 600;">
+                                <span class="calendar-month-label">${calendarControl.calMonthName[calendar.getMonth()]}</span>
+                                <span>-</span>
+                                <span class="calendar-year-label">${calendar.getFullYear()}</span>
+                            </div>
+                            <button class="calendar-next p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Next Month" style="font-size: 2.8vmin;">&gt;</button>
+                        </div>
+
+                        <div class="calendar-today-date-wrapper text-center p-[1vmin] cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors" title="Go to Today" style="font-size: 1.8vmin; margin-bottom: 1vmin;">
+                            TODAY: ${calendarControl.calWeekDays[calendarControl.localDate.getDay()]}, 
+                            ${calendarControl.localDate.getDate()} 
+                            ${calendarControl.calMonthName[calendarControl.localDate.getMonth()]} 
+                            ${calendarControl.localDate.getFullYear()}
+                        </div>
+
+                        <div class="calendar-body grid grid-cols-7 gap-[0.5vmin] flex-grow items-stretch content-stretch">
+                            ${calendarControl.calWeekDays.map(day => `
+                                <div class="day-name text-center font-semibold text-slate-500 dark:text-slate-400 py-[0.5vmin] border-b border-slate-200 dark:border-slate-600" style="font-size: 1.6vmin;">
+                                    ${day.substring(0,3)}
+                                </div>`).join('')}
+                            
+                            ${this.generateDateCells()}
+                        </div>
+                    </div>
+                `;
+                this.attachAllEvents();
+            },
+            
+            generateDateCells: function() {
+                let cellsHTML = '';
+                const month = calendar.getMonth();
+                const year = calendar.getFullYear();
+                const firstDay = calendarControl.firstDayNumber();
+                const daysInCurrentMonth = calendarControl.daysInMonth(month + 1, year);
+
+                for (let i = 0; i < firstDay; i++) {
+                    cellsHTML += `<div class="date-cell empty p-[0.5vmin] border border-transparent"></div>`; // Keep transparent border for layout consistency
+                }
+
+                for (let day = 1; day <= daysInCurrentMonth; day++) {
+                    let isToday = day === calendarControl.localDate.getDate() && 
+                                  month === calendarControl.localDate.getMonth() && 
+                                  year === calendarControl.localDate.getFullYear();
+                    
+                    let cellClasses = "date-cell flex items-center justify-center p-[0.5vmin] rounded cursor-pointer border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors";
+                    if (isToday) {
+                        // For "today", border color could match accent or stay default. Keeping default for grid consistency.
+                        cellClasses = "date-cell flex items-center justify-center p-[0.5vmin] rounded cursor-pointer border border-slate-200 dark:border-slate-600 calendar-today bg-accent dark:bg-accent-dark text-white font-semibold hover:bg-accent/90 dark:hover:bg-accent-dark/90";
+                    }
+                    
+                    cellsHTML += `
+                        <div class="${cellClasses}" data-date="${day} ${calendarControl.calMonthName[month]} ${year}" style="min-height: 4vmin; font-size: 1.8vmin;">
+                            <span class="date-content">${day}</span>
+                        </div>`;
+                }
+                
+                const totalCellsSoFar = firstDay + daysInCurrentMonth;
+                const remainingCells = (7 - (totalCellsSoFar % 7)) % 7;
+                 for (let i = 0; i < remainingCells; i++) {
+                    cellsHTML += `<div class="date-cell empty p-[0.5vmin] border border-transparent"></div>`; // Keep transparent border for layout consistency
+                }
+                return cellsHTML;
+            },
+
+            attachAllEvents: function() {
+                document.querySelector(".calendar-widget-container .calendar-prev")?.addEventListener("click", calendarControl.navigateToPreviousMonth);
+                document.querySelector(".calendar-widget-container .calendar-next")?.addEventListener("click", calendarControl.navigateToNextMonth);
+                document.querySelector(".calendar-widget-container .calendar-today-date-wrapper")?.addEventListener("click", calendarControl.navigateToCurrentMonth);
+                
+                document.querySelectorAll(".calendar-widget-container .date-cell:not(.empty)").forEach(cell => {
+                    cell.addEventListener("click", calendarControl.selectDate);
+                });
+            },
+
+            init: function() {
+                calendarControl.renderCalendar();
+            }
+        };
+        calendarControl.init();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarControlInstance = new CalendarControl();
+    });
+    </script>
+</body>
+</html>

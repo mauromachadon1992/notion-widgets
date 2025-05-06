@@ -38,11 +38,12 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            /* overflow: hidden;
+            /* overflow: hidden; /* Removido para permitir rolagem se necessário, especialmente no modo vertical */
         }
 
+        /* Estilo base para os ícones do Font Awesome */
         .navMenu a i {
-            @apply mr-2 w-4 text-center;
+            @apply mr-2 w-4 text-center; 
         }
     </style>
     <script>
@@ -60,7 +61,7 @@
         })();
     </script>
 </head>
-<body class="bg-white dark:bg-slate-900 font-mono text-slate-800 dark:text-slate-200 flex items-start justify-center p-2 sm:p-4 transition-colors duration-300">
+<body class="bg-white dark:bg-slate-900 font-mono text-slate-800 dark:text-slate-200 flex items-center justify-center p-2 sm:p-4 transition-colors duration-300">
     <!-- Wrapper para permitir que o menu tenha 'width: fit-content' efetivamente com Tailwind -->
     <div id="navWrapper" class="w-full sm:w-auto"> 
         <nav id="navMenu" class="navMenu bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-sm p-1.5 sm:p-2 flex flex-wrap justify-center"> 
@@ -98,27 +99,23 @@
         let direction = "horizontal"; // Mude para "vertical" para layout de coluna
 
         const navMenuElement = document.getElementById('navMenu');
-        const navWrapperElement = document.getElementById('navWrapper');
+        const navWrapperElement = document.getElementById('navWrapper'); // Obter referência ao wrapper
 
         if (direction === "vertical") {
             navMenuElement.classList.remove('flex-wrap', 'justify-center');
-            navMenuElement.classList.add('flex-col', 'items-start', 'w-full', 'sm:w-auto', 'sm:min-w-[200px]'); // Largura total em telas pequenas, auto em maiores
-             navWrapperElement.classList.remove('sm:w-auto'); // Permite que o wrapper seja mais largo se o menu for vertical
+            navMenuElement.classList.add('flex-col', 'items-start', 'w-full', 'sm:w-auto', 'sm:min-w-[200px]');
+            navWrapperElement.classList.remove('sm:w-auto'); 
+            navWrapperElement.classList.add('w-full', 'sm:w-auto'); // Garante que o wrapper possa se ajustar no modo vertical
             
-            document.querySelectorAll('.navMenu a').forEach(link => {
-                link.classList.add('w-full', 'my-0.5'); // Ocupar largura total e pequena margem vertical
-                // O estilo do ícone já está no CSS global
+            document.querySelectorAll('#navMenu a.nav-item').forEach(link => { // Selecionador mais específico
+                link.classList.add('w-full', 'my-0.5');
             });
         } else { // Horizontal (padrão)
-            // As classes padrão já lidam com o layout horizontal com quebra de linha.
-            // Se quiser forçar uma única linha e permitir rolagem horizontal, precisaria de mais ajustes.
-            // Para embed, o comportamento de quebra de linha (`flex-wrap`) geralmente é preferível.
             navMenuElement.classList.add('flex-wrap', 'justify-center');
+             // navWrapperElement.classList.add('sm:w-auto'); // Já está no HTML, mas para garantir
         }
 
         function navigate(id) {
-            // A lógica de navegação (window.open) permanece a mesma.
-            // Exemplo simplificado:
             const urls = {
                 home: "https://example.com/home",
                 inbox: "https://example.com/inbox",
@@ -130,7 +127,7 @@
                 topics: "https://example.com/topics",
                 notes: "https://example.com/notes",
                 media: "https://example.com/media",
-                resourses: "https://example.com/resources", // Corrigido 'resourses'
+                resourses: "https://example.com/resources",
                 lifewiki: "https://example.com/lifewiki"
             };
             if (urls[id]) {

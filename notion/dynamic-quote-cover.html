@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Quote Cover for Notion</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0; /* Cor de fundo para teste */
+        }
+        /* O Notion geralmente dimensiona o cover. Para teste local, definimos um tamanho. */
+        /* A proporção comum de covers do Notion é ~1500x500 ou 1500x600. */
+        /* Ajuste a largura/altura aqui para testar diferentes proporções. */
+        svg#quoteCover {
+            width: 100%; /* Para preencher o embed do Notion */
+            max-width: 1500px; /* Largura máxima típica de um cover */
+            height: auto; /* Mantém a proporção definida no viewBox */
+            aspect-ratio: 1500 / 500; /* Exemplo de proporção 3:1 */
+            /* Para o Notion, a altura será controlada pelo contêiner do cover */
+        }
+    </style>
+</head>
+<body>
+
+<svg id="quoteCover" viewBox="0 0 1500 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <defs>
+        <!-- Definição de filtro para sombra de texto sutil (opcional) -->
+        <filter id="textShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feOffset dx="2" dy="2" result="offsetblur"/>
+            <feFlood flood-color="rgba(0,0,0,0.3)"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+
+    <!-- Imagem de fundo animada -->
+    <image href="https://lib.notion.vip/tools/animated-notion-covers/animated-notion-cover_01.svg" x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"/>
+
+    <!-- Overlay Sutil para Melhorar Legibilidade do Texto (Opcional) -->
+    <rect x="0" y="0" width="100%" height="100%" fill="rgba(0, 0, 0, 0.15)" />
+
+    <!-- Grupo para a Citação e Autor -->
+    <g id="quoteElements" style="filter: url(#textShadow);">
+        <!-- Aspas decorativas (maiores) -->
+        <text x="100" y="280" 
+              font-family="'Georgia', 'Times New Roman', serif" 
+              font-size="150" 
+              fill="rgba(255, 255, 255, 0.5)" 
+              text-anchor="start">“</text>
+        
+        <text x="1400" y="280" 
+              font-family="'Georgia', 'Times New Roman', serif" 
+              font-size="150" 
+              fill="rgba(255, 255, 255, 0.5)" 
+              text-anchor="end">”</text>
+
+        <!-- Elemento de texto para a Citação -->
+        <!-- y: Posição vertical (centro do viewBox é 250) -->
+        <!-- text-anchor: middle para centralizar horizontalmente -->
+        <text id="quoteText" 
+              x="50%" 
+              y="48%" 
+              font-family="'Merriweather', 'Georgia', serif" 
+              font-size="50" 
+              font-weight="700"
+              fill="white" 
+              text-anchor="middle"
+              dominant-baseline="middle">
+            <!-- O texto da citação será inserido aqui pelo JavaScript -->
+            Carregando citação...
+        </text>
+
+        <!-- Elemento de texto para o Autor -->
+        <text id="authorText" 
+              x="50%" 
+              y="65%" 
+              font-family="'Merriweather', 'Georgia', serif" 
+              font-size="28" 
+              font-weight="400"
+              fill="rgba(255, 255, 255, 0.85)" 
+              text-anchor="middle"
+              dominant-baseline="middle">
+            <!-- O autor será inserido aqui -->
+        </text>
+    </g>
+
+    <!-- Importação de Fontes do Google (se necessário e se o contexto de embed permitir) -->
+    <!-- É mais seguro usar fontes comuns ou garantir que o SVG seja auto-contido se as fontes não puderem ser carregadas externamente -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Georgia&display=swap');
+        /* Adicione estilos CSS aqui se preferir em vez de atributos inline no SVG */
+        /* Por exemplo: */
+        /* #quoteText { fill: white; font-family: 'Merriweather', serif; ... } */
+    </style>
+</svg>
+
+<script>
+    const quotes = [
+        { text: "A imaginação é mais importante que o conhecimento.", author: "Albert Einstein" },
+        { text: "A vida é o que acontece enquanto você está ocupado fazendo outros planos.", author: "John Lennon" },
+        { text: "O único modo de fazer um ótimo trabalho é amar o que você faz.", author: "Steve Jobs" },
+        { text: "Acredite que você pode, assim você já está no meio do caminho.", author: "Theodore Roosevelt" },
+        { text: "Não espere por uma crise para descobrir o que é importante em sua vida.", author: "Platão" },
+        { text: "A persistência é o caminho do êxito.", author: "Charles Chaplin" },
+        { text: "O sucesso é a soma de pequenos esforços repetidos dia após dia.", author: "Robert Collier" },
+        { text: "Seja a mudança que você quer ver no mundo.", author: "Mahatma Gandhi" }
+    ];
+
+    function getRandomQuote() {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        return quotes[randomIndex];
+    }
+
+    function updateQuoteInSVG() {
+        const quoteData = getRandomQuote();
+        const quoteTextElement = document.getElementById('quoteText');
+        const authorTextElement = document.getElementById('authorText');
+
+        if (quoteTextElement && authorTextElement) {
+            // Limpar tspans anteriores se houver
+            quoteTextElement.innerHTML = ''; 
+
+            // Simples quebra de linha manual (máximo 2 linhas para este exemplo)
+            // Para quebras mais complexas, seria necessário um algoritmo de quebra de linha.
+            const maxLineLength = 45; // Número aproximado de caracteres por linha
+            let line1 = quoteData.text;
+            let line2 = null;
+
+            if (quoteData.text.length > maxLineLength) {
+                let breakPoint = quoteData.text.lastIndexOf(' ', maxLineLength);
+                if (breakPoint === -1) breakPoint = maxLineLength; // Se não houver espaço, quebra forçada
+                line1 = quoteData.text.substring(0, breakPoint);
+                line2 = quoteData.text.substring(breakPoint + 1);
+            }
+            
+            const tspan1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+            tspan1.setAttribute("x", "50%");
+            tspan1.setAttribute("dy", line2 ? "-0.6em" : "0"); // Ajusta para cima se houver duas linhas
+            tspan1.textContent = line1;
+            quoteTextElement.appendChild(tspan1);
+
+            if (line2) {
+                const tspan2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+                tspan2.setAttribute("x", "50%");
+                tspan2.setAttribute("dy", "1.2em"); // Espaçamento entre linhas
+                tspan2.textContent = line2;
+                quoteTextElement.appendChild(tspan2);
+            }
+            
+            authorTextElement.textContent = `- ${quoteData.author} -`;
+        }
+    }
+
+    // Atualiza a citação quando a página (ou o embed) carrega
+    window.onload = updateQuoteInSVG;
+</script>
+
+</body>
+</html>

@@ -110,12 +110,12 @@
             const urls = {
                 goals: "https://example.com/home",
                 planning: "https://example.com/inbox",
-                health: "notion://Health-Hub-1eb03a8d99ab8037a458f298b233090c",
+                health: "notion://square-designs/Health-Hub-1eb03a8d99ab8037a458f298b233090c?pvs=4",
                 finance: "https://example.com/projects",
                 personal: "https://example.com/tasks",
             };
             if (urls[id]) {
-                window.open(urls[id], '_blank').focus();
+                window.open(urls[id], '_self').focus();
             } else {
                 console.warn("No URL defined for ID:", id);
             }

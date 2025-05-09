@@ -1,286 +1,350 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full"> <!-- h-full para que o html ocupe toda a altura do iframe -->
+<html lang="pt-BR" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Tailwind Calculator for Notion</title>
+    <title>Calculadora com Seletor de Cores</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'class', // Habilita o modo escuro baseado em classe
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
-                        mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'],
-                    },
                     colors: {
-                        slate: { // Paleta 'slate' similar ao Notion
-                            50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8',
-                            500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617',
-                        }
+                        // Cores personalizadas se necessário
                     }
                 }
             }
         }
     </script>
-    <style type="text/tailwindcss">
-        /* Estilo para o símbolo de raiz quadrada (overline) */
-        .button > .over {
-            text-decoration: overline;
-            display: inline-block;
-            position: relative;
-            top: 0.1vmin; /* Ajustado para vmin */
-            left: -0.2vmin; /* Ajustado para vmin */
+    <style>
+        /* Estilos adicionais se necessário */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #e5e7eb; /* light gray background */
         }
-        /* Forçar o html e body a terem 100% da altura do container (iframe) */
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
+        .dark body {
+            background-color: #1f2937; /* dark gray background for dark mode */
+        }
+        .calculator {
+            width: clamp(280px, 90vmin, 400px); /* Responsividade do tamanho da calculadora */
+            height: auto;
+        }
+        /* Ajustes para o input de cor */
+        #colorPicker {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: transparent;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0; /* Remove padding interno para melhor visualização da cor */
+        }
+        #colorPicker::-webkit-color-swatch-wrapper {
             padding: 0;
-            overflow: hidden; /* Evita barras de rolagem desnecessárias no iframe */
+        }
+        #colorPicker::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px; /* Arredonda o swatch interno */
+        }
+        #colorPicker::-moz-color-swatch {
+            border: none;
+            border-radius: 4px;
         }
     </style>
-    <script>
-        (function() {
-            function applyTheme() {
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            }
-            applyTheme();
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
-        })();
-    </script>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 flex items-center justify-center font-sans transition-colors duration-300">
 
-    <div class="calculator bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 
+<body>
+
+    <div class="calculator bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700
                 w-full h-full font-mono flex flex-col p-[1.5vmin]">
-        
-        <input type="text" id="screen" 
-               class="w-full p-[1.5vmin] text-[5vmin] text-right bg-slate-100 dark:bg-slate-700 
-                      text-slate-800 dark:text-slate-100 rounded-md focus:outline-none 
-                      focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 
-                      transition-colors duration-300 mb-[1.5vmin] min-h-[8vmin] flex-shrink-0" readonly> 
-        
-        <div class="button-grid flex-grow grid grid-cols-4 gap-[1vmin]">
-    
-            <button class="button btn-op">(</button>
-            <button class="button btn-op">)</button>
-            <button class="button btn-op">%</button>
-            <button class="button btn-ac">AC</button>
 
-            <button class="button btn-op">x^</button>
-            <button class="button btn-num">7</button>
-            <button class="button btn-num">8</button>
-            <button class="button btn-num">9</button>
-
-            <button class="button btn-op">&radic;<span class="over"></span></button>
-            <button class="button btn-num">4</button>
-            <button class="button btn-num">5</button>
-            <button class="button btn-num">6</button>
-
-            <button class="button btn-op">*</button>
-            <button class="button btn-num">1</button>
-            <button class="button btn-num">2</button>
-            <button class="button btn-num">3</button>
-            
-            <button class="button btn-op">/</button>
-            <button class="button btn-num">0</button>
-            <button class="button btn-num">.</button>
-            <button class="button btn-op">-</button>
-            
-            <button class="button btn-op col-span-2">+</button>
-            <button class="button btn-equals col-span-2">=</button>
+        <!-- Seletor de Cores -->
+        <div class="color-picker-container flex items-center mb-[1.5vmin] justify-between">
+            <label for="colorPicker" class="text-[1.8vmin] mr-[1vmin] text-slate-700 dark:text-slate-300">Cor do Tema:</label>
+            <input type="color" id="colorPicker" value="#64748b" class="w-[6vmin] h-[3.5vmin] cursor-pointer">
         </div>
+
+        <!-- Visor da Calculadora -->
+        <input type="text" id="screen" readonly
+            class="screen bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100
+                   text-right text-[5vmin] p-[2vmin] mb-[1.5vmin] rounded-md w-full
+                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400
+                   border border-slate-300 dark:border-slate-600">
+
+        <!-- Botões da Calculadora -->
+        <div class="buttons grid grid-cols-4 gap-[1vmin] flex-grow">
+            <!-- Linha 1 -->
+            <button onclick="clearScreen()" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">AC</button>
+            <button onclick="toggleSign()" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">+/-</button>
+            <button onclick="inputOperator('%')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">%</button>
+            <button onclick="inputOperator('/')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">÷</button>
+
+            <!-- Linha 2 -->
+            <button onclick="inputDigit('7')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">7</button>
+            <button onclick="inputDigit('8')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">8</button>
+            <button onclick="inputDigit('9')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">9</button>
+            <button onclick="inputOperator('*')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">×</button>
+
+            <!-- Linha 3 -->
+            <button onclick="inputDigit('4')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">4</button>
+            <button onclick="inputDigit('5')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">5</button>
+            <button onclick="inputDigit('6')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">6</button>
+            <button onclick="inputOperator('-')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">-</button>
+
+            <!-- Linha 4 -->
+            <button onclick="inputDigit('1')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">1</button>
+            <button onclick="inputDigit('2')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">2</button>
+            <button onclick="inputDigit('3')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">3</button>
+            <button onclick="inputOperator('+')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">+</button>
+
+            <!-- Linha 5 -->
+            <button onclick="inputDigit('0')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md col-span-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">0</button>
+            <button onclick="inputDecimal()" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">.</button>
+            <button onclick="calculate()" class="button btn-equals text-[2.5vmin] p-[2vmin] bg-slate-500 dark:bg-slate-500 hover:bg-slate-600 dark:hover:bg-slate-400 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">=</button>
+        </div>
+
+        <!-- Botão Dark Mode -->
+        <button id="darkModeToggle" class="mt-[1.5vmin] p-[1vmin] text-[1.8vmin] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors w-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400">
+            Modo Escuro/Claro
+        </button>
     </div>
 
-    <style type="text/tailwindcss">
-        @layer components {
-            .button {
-                @apply rounded-md font-medium transition-all duration-150 ease-in-out
-                       focus:outline-none focus:ring-1 focus:ring-offset-1 
-                       dark:focus:ring-offset-slate-800 focus:ring-slate-500 dark:focus:ring-slate-400
-                       active:scale-95
-                       p-[1.5vmin] text-[2.8vmin] /* Padding e tamanho da fonte com vmin */
-                       flex items-center justify-center; /* Para centralizar conteúdo do botão */
-            }
-            .btn-num {
-                @apply bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600
-                       text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-600;
-            }
-            .btn-op {
-                @apply bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500
-                       text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-500;
-            }
-            .btn-ac {
-                @apply bg-slate-300 dark:bg-slate-500 hover:bg-slate-400 dark:hover:bg-slate-400
-                       text-slate-700 dark:text-slate-100 font-semibold border border-slate-400 dark:border-slate-400;
-            }
-            .btn-equals {
-                @apply bg-slate-700 dark:bg-slate-400 hover:bg-slate-600 dark:hover:bg-slate-300
-                       text-white dark:text-slate-900 font-semibold border border-slate-700 dark:border-slate-400;
-            }
-        }
-    </style>
-
-    <!-- O JavaScript da lógica da calculadora permanece o mesmo -->
     <script>
-        var display = document.getElementById("screen");
-        var buttons = document.querySelectorAll(".calculator .button"); 
-        
-        Array.prototype.forEach.call(buttons, function(button) {
-        button.addEventListener("click", function() {
-            const buttonText = button.textContent.trim();
-            if (buttonText === "√") {
-                if(display.value && !isNaN(parseFloat(display.value))) {
-                    display.value = Math.sqrt(parseFloat(display.value));
-                } else {
-                    display.value = "Error";
-                }
+        const screen = document.getElementById('screen');
+        let currentInput = '0';
+        let operator = null;
+        let previousInput = null;
+        let waitingForSecondOperand = false;
+
+        function updateScreen() {
+            screen.value = currentInput;
+        }
+
+        function inputDigit(digit) {
+            if (waitingForSecondOperand) {
+                currentInput = digit;
+                waitingForSecondOperand = false;
+            } else {
+                currentInput = currentInput === '0' ? digit : currentInput + digit;
+            }
+            updateScreen();
+        }
+
+        function inputDecimal() {
+            if (waitingForSecondOperand) {
+                currentInput = '0.';
+                waitingForSecondOperand = false;
+                updateScreen();
+                return;
+            }
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+            }
+            updateScreen();
+        }
+
+        function clearScreen() {
+            currentInput = '0';
+            operator = null;
+            previousInput = null;
+            waitingForSecondOperand = false;
+            updateScreen();
+        }
+
+        function inputOperator(nextOperator) {
+            const inputValue = parseFloat(currentInput);
+
+            if (operator && waitingForSecondOperand) {
+                operator = nextOperator;
                 return;
             }
 
-            if (buttonText != "=" && 
-            buttonText != "AC" && 
-            buttonText != "*" && 
-            buttonText != "/" && 
-            buttonText != "+" && 
-            buttonText != "%" && 
-            buttonText != "-" && 
-            buttonText != "sin" && 
-            buttonText != "cos" && 
-            buttonText != "tan" && 
-            buttonText != "log" && 
-            buttonText != "ln" && 
-            buttonText != "x^" && 
-            buttonText != "x!" && 
-            buttonText != "pi" && 
-            buttonText != "Rad" &&
-            buttonText != "Deg") {
-            display.value += buttonText;
-            } else if (buttonText === "=") {
-            equals();
-            } else if (buttonText === "AC") {
-            clear();
-            } else if (buttonText === "*") {
-            multiply();
-            } else if (buttonText === "/") {
-            divide();
-            } else if (buttonText === "+") {
-            plus();
-            } else if (buttonText === "-") {
-            Minus();
-            } else if (buttonText === "%") {
-            percent();
-            } else if (buttonText === "pi") {
-            pi();
-            } else if (buttonText === "sin") {
-            sin();
-            } else if (buttonText === "cos") {
-            cos();
-            } else if (buttonText === "tan") {
-            tan();
-            } else if (buttonText === "log") {
-            log();
-            } else if (buttonText === "ln") {
-            ln();
-            } else if (buttonText === "x^") {
-            exponent();
-            } else if (buttonText === "x!") {
-            factorial();
-            } else if (buttonText === "Rad") {
-            radians();
-            } else if (buttonText === "Deg") {
-            degrees();
+            if (previousInput === null) {
+                previousInput = inputValue;
+            } else if (operator) {
+                const result = performCalculation[operator](previousInput, inputValue);
+                currentInput = String(parseFloat(result.toFixed(7))); // Limita casas decimais
+                previousInput = result;
             }
-        });
-        });
 
-        function syntaxError() {
-            try {
-                new Function('return ' + display.value)();
-            } catch (e) {
-                if (e instanceof SyntaxError || e instanceof ReferenceError || e instanceof TypeError) {
-                display.value = "Syntax Error";
-                }
-            }
-        }
-
-        function equals() {
-            if ((display.value).indexOf("^") > -1) {
-                var base = (display.value).slice(0, (display.value).indexOf("^"));
-                var exponent_val = (display.value).slice((display.value).indexOf("^") + 1); 
-                try {
-                    let numBase = parseFloat(base);
-                    let numExponent = parseFloat(exponent_val);
-                    if (isNaN(numBase) || isNaN(numExponent)) throw "Error";
-                    display.value = Math.pow(numBase, numExponent);
-                } catch (e) {
-                    display.value = "Error";
-                }
-            } else {
-                try {
-                    const result = new Function('return ' + display.value)();
-                    if (typeof result === 'number' && !isNaN(result)) {
-                        display.value = result;
-                    } else {
-                        display.value = "Error";
-                    }
-                } catch (e) {
-                    display.value = "Error";
-                }
-            }
-        }
-
-        function clear() {
-            display.value = "";
-        }
-
-        function multiply() { display.value += "*"; }
-        function divide() { display.value +=  "/"; }
-        function plus() { display.value +=  "+"; }
-        function Minus() { display.value +=  "-"; }
-
-        function factorial() {
-            var number = 1;
-            var val = parseFloat(display.value);
-            if (isNaN(val) || val < 0 || !Number.isInteger(val)) { 
-                display.value = "Error"; 
-                return;
-            }
-            if (val === 0) {
-                display.value = "1";
-            } else {
-                for (var i = val; i > 0; i--) { number *=  i; }
-                display.value = number;
-            }
-        }
-
-        function pi() {
-            if (display.value === "" || isNaN(parseFloat(display.value.slice(-1)))) {
-                display.value += Math.PI.toFixed(8);
-            } else {
-                 try { display.value = (parseFloat(display.value) * Math.PI).toFixed(8); } catch (e) { display.value = "Error"; }
-            }
+            waitingForSecondOperand = true;
+            operator = nextOperator;
+            updateScreen();
         }
         
-        function percent() {
-            try { display.value = parseFloat(display.value) / 100; } catch(e) { display.value = "Error"; }
+        const performCalculation = {
+            '/': (firstOperand, secondOperand) => secondOperand === 0 ? 'Erro' : firstOperand / secondOperand,
+            '*': (firstOperand, secondOperand) => firstOperand * secondOperand,
+            '+': (firstOperand, secondOperand) => firstOperand + secondOperand,
+            '-': (firstOperand, secondOperand) => firstOperand - secondOperand,
+            '%': (firstOperand, secondOperand) => firstOperand * (secondOperand / 100) // Cálculo de porcentagem
+        };
+
+        function calculate() {
+            if (operator === null || waitingForSecondOperand) {
+                return;
+            }
+            const inputValue = parseFloat(currentInput);
+            if (operator === '/' && inputValue === 0) {
+                 currentInput = 'Erro';
+                 updateScreen();
+                 operator = null;
+                 previousInput = null;
+                 waitingForSecondOperand = false;
+                 return;
+            }
+            const result = performCalculation[operator](previousInput, inputValue);
+            
+            currentInput = String(parseFloat(result.toFixed(7))); // Limita casas decimais
+            operator = null;
+            previousInput = null;
+            waitingForSecondOperand = false;
+            updateScreen();
         }
 
-        function sin() { try { display.value = Math.sin(parseFloat(display.value)); } catch(e) { display.value = "Error";} }
-        function cos() { try { display.value = Math.cos(parseFloat(display.value)); } catch(e) { display.value = "Error";} }
-        function tan() { try { display.value = Math.tan(parseFloat(display.value)); } catch(e) { display.value = "Error";} }
-        function log() { try { display.value = Math.log10(parseFloat(display.value)); } catch(e) { display.value = "Error";} }
-        function ln() { try { display.value = Math.log(parseFloat(display.value)); } catch(e) { display.value = "Error";} }
-        function exponent() { display.value += "^"; }
-        function radians() { try { display.value = parseFloat(display.value) * (Math.PI / 180); } catch(e) { display.value = "Error";} }
-        function degrees() { try { display.value = parseFloat(display.value) * (180 / Math.PI); } catch(e) { display.value = "Error";} }
+        function toggleSign() {
+            currentInput = String(parseFloat(currentInput) * -1);
+            updateScreen();
+        }
+        
+        // Inicializa o visor
+        updateScreen();
+
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const htmlElement = document.documentElement;
+
+        // Verifica preferência do sistema ou localStorage
+        if (localStorage.getItem('darkMode') === 'true' || 
+            (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            // Salva a preferência do usuário
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+
+        // --- INÍCIO: LÓGICA DO SELETOR DE CORES ---
+        const colorPicker = document.getElementById("colorPicker");
+        const calculatorElement = document.querySelector(".calculator"); // Referência ao elemento da calculadora se precisar
+        const styleTagId = "custom-theme-styles"; // ID para a tag de estilo dinâmica
+
+        // Função para aplicar a cor do tema
+        function applyThemeColor(color) {
+            // Criar versões mais claras e escuras da cor selecionada
+            const lighterColor = adjustColorBrightness(color, 40); // Mais claro para botões de operação
+            const darkerColor = adjustColorBrightness(color, -20);  // Mais escuro para bordas
+
+            // Aplicar às classes dos botões
+            // Botão de Igual (cor principal)
+            document.querySelectorAll(".btn-equals").forEach(btn => {
+                btn.style.backgroundColor = color;
+                btn.style.borderColor = darkerColor;
+                // Para manter o contraste do texto, podemos decidir a cor do texto baseado no brilho da cor de fundo
+                btn.style.color = getContrastYIQ(color);
+            });
+            
+            // Botões de Operação (cor mais clara)
+            document.querySelectorAll(".btn-op").forEach(btn => {
+                btn.style.backgroundColor = lighterColor;
+                btn.style.borderColor = color;
+                btn.style.color = getContrastYIQ(lighterColor);
+            });
+            
+            // Aplicar ao foco dos elementos (usando variável CSS)
+            document.documentElement.style.setProperty('--theme-color-focus', color);
+
+            // Adicionar/atualizar estilos para o foco dinamicamente
+            let styleTag = document.getElementById(styleTagId);
+            if (!styleTag) {
+                styleTag = document.createElement('style');
+                styleTag.id = styleTagId;
+                document.head.appendChild(styleTag);
+            }
+            // Usamos !important com cautela, apenas se necessário para sobrescrever Tailwind
+            styleTag.innerHTML = `
+                .button:focus {
+                    --tw-ring-color: ${color} !important; 
+                }
+                #screen:focus {
+                    --tw-ring-color: ${color} !important;
+                }
+                #darkModeToggle:focus {
+                     --tw-ring-color: ${color} !important;
+                }
+            `;
+        }
+
+        // Função auxiliar para ajustar o brilho de uma cor hexadecimal
+        function adjustColorBrightness(hex, percent) {
+            hex = hex.replace(/^#/, '');
+            if (hex.length === 3) {
+                hex = hex.split('').map(char => char + char).join('');
+            }
+
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+
+            r = Math.max(0, Math.min(255, Math.round(r * (1 + percent / 100))));
+            g = Math.max(0, Math.min(255, Math.round(g * (1 + percent / 100))));
+            b = Math.max(0, Math.min(255, Math.round(b * (1 + percent / 100))));
+            
+            const toHex = c => ('0' + c.toString(16)).slice(-2);
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+        
+        // Função para obter cor de texto contrastante (branco ou preto)
+        function getContrastYIQ(hexcolor){
+            hexcolor = hexcolor.replace("#", "");
+            var r = parseInt(hexcolor.substr(0,2),16);
+            var g = parseInt(hexcolor.substr(2,2),16);
+            var b = parseInt(hexcolor.substr(4,2),16);
+            var yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128) ? '#000000' : '#FFFFFF';
+        }
+
+
+        // Verificar se há uma cor salva no localStorage ao carregar a página
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedColor = localStorage.getItem("calculatorThemeColor");
+            const defaultColor = "#64748b"; // Cor padrão se nada estiver salvo
+
+            if (savedColor) {
+                colorPicker.value = savedColor;
+                applyThemeColor(savedColor);
+            } else {
+                colorPicker.value = defaultColor; // Define o valor do picker para o padrão
+                applyThemeColor(defaultColor); // Aplica a cor padrão inicialmente
+            }
+        });
+
+        // Aplicar a cor enquanto o usuário seleciona (live update)
+        colorPicker.addEventListener("input", function(event) {
+            const selectedColor = event.target.value;
+            applyThemeColor(selectedColor);
+        });
+
+        // Salvar a cor quando o usuário finalizar a seleção (soltar o mouse ou fechar o picker)
+        colorPicker.addEventListener("change", function(event) {
+            const selectedColor = event.target.value;
+            localStorage.setItem("calculatorThemeColor", selectedColor);
+        });
+        // --- FIM: LÓGICA DO SELETOR DE CORES ---
+
     </script>
 </body>
 </html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Customizer - Square Designs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #colorPicker1, #colorPicker2 {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: transparent;
+            border: 1px solid #94a3b8;
+            border-radius: 4px;
+            padding: 0;
+        }
+
+        .dark #colorPicker1, .dark #colorPicker2 {
+            border-color: #475569;
+        }
+
+        #colorPicker1::-webkit-color-swatch-wrapper,
+        #colorPicker2::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        #colorPicker1::-webkit-color-swatch,
+        #colorPicker2::-webkit-color-swatch {
+            border: none;
+            border-radius: 3px;
+        }
+
+        #colorPicker1::-moz-color-swatch,
+        #colorPicker2::-moz-color-swatch {
+            border: none;
+            border-radius: 3px;
+        }
+        
+        .svg-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        
+        .path-primary {
+            stroke: var(--primary-color, #DCCCEA);
+        }
+        
+        .path-secondary {
+            stroke: var(--secondary-color, #BBD8EC);
+        }
+        
+        .dark .path-primary {
+            stroke: var(--primary-color-dark, #9C8DB3);
+        }
+        
+        .dark .path-secondary {
+            stroke: var(--secondary-color-dark, #7BA7C5);
+        }
+        
+        .icon-selector {
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .icon-selector:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .dark .icon-selector:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .icon-selector.selected {
+            border-color: var(--primary-color, #DCCCEA);
+        }
+        
+        .dark .icon-selector.selected {
+            border-color: var(--primary-color-dark, #9C8DB3);
+        }
+        
+        .btn-download {
+            background-color: var(--primary-color, #DCCCEA);
+            color: black;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-download:hover {
+            background-color: var(--primary-color-dark, #9C8DB3);
+        }
+        
+        .dark .btn-download {
+            background-color: var(--primary-color-dark, #9C8DB3);
+            color: white;
+        }
+        
+        .dark .btn-download:hover {
+            background-color: var(--primary-color, #DCCCEA);
+            color: black;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 font-sans flex flex-col items-center justify-center min-h-screen transition-colors duration-300 p-4">
+    <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 space-y-6">
+        <h1 class="text-2xl font-bold text-center text-slate-800 dark:text-white">SVG Customizer - Square Designs</h1>
+        
+        <!-- Seletor de ícones -->
+        <div class="grid grid-cols-5 gap-2">
+            <div class="icon-selector selected p-2" data-icon="0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                    <path class="path-primary" d="M64 37.3325C64.0454 33.2008 65.0292 29.1335 66.8773 25.4379C68.7253 21.7422 71.3892 18.515 74.6675 16" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="path-secondary" d="M106.24 66.0275C103.573 90.2937 92.3727 112 81.014 112C73.6003 112 71.8927 106.667 64.0003 106.667C56.1078 106.667 54.3491 112 46.9865 112C35.6278 112 24.4278 90.2912 21.7603 66.0275C19.8915 48.7987 24.2127 38.08 34.6678 33.7075C48.0003 28.1062 55.5215 37.3324 64.0003 37.3324C72.4815 37.3324 80.0003 28.1062 93.2815 33.7075C103.734 38.08 108.16 48.7987 106.24 66.0275Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="icon-selector p-2" data-icon="1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                    <path class="path-primary" d="M37.3325 64V101.332L26.6675 112L16 101.332V64C16 62.5857 16.5618 61.2294 17.5618 60.2293C18.5619 59.2293 19.9182 58.6675 21.3325 58.6675H32C33.4143 58.6675 34.7706 59.2293 35.7706 60.2293C36.7707 61.2294 37.3325 62.5857 37.3325 64Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="path-secondary" d="M112 85.3325H101.332M112 42.6675H101.332M112 64H101.332M58.6671 112H101.332C102.747 112 104.103 111.438 105.104 110.438C106.104 109.438 106.666 108.082 106.667 106.668V21.3325C106.667 20.632 106.529 19.9384 106.261 19.2912C105.993 18.6441 105.6 18.0561 105.104 17.5609C104.609 17.0657 104.021 16.673 103.373 16.4052C102.726 16.1373 102.033 15.9997 101.332 16H42.6671C41.9666 15.9997 41.2729 16.1373 40.6256 16.4052C39.9784 16.673 39.3902 17.0657 38.8948 17.5609C38.3993 18.0561 38.0063 18.6441 37.7382 19.2912C37.47 19.9384 37.332 20.632 37.332 21.3325V37.3325" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="icon-selector p-2" data-icon="2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                    <path class="path-primary" d="M80.0004 48L66.668 61.3325M80.0004 48V32L96.0004 16V32H112L96.0004 48H80.0004Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="path-secondary" d="M65.7613 16H64C54.5065 16 45.2262 18.8152 37.3327 24.0895C29.4391 29.3638 23.2868 36.8603 19.6538 45.6312C16.0208 54.4021 15.0702 64.0533 16.9223 73.3643C18.7744 82.6754 23.346 91.2282 30.0589 97.9411C36.7718 104.654 45.3246 109.226 54.6357 111.078C63.9468 112.93 73.598 111.979 82.3688 108.346C91.1397 104.713 98.6363 98.5609 103.911 90.6674C109.185 82.7738 112 73.4935 112 64V62.2413" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="path-secondary" d="M90.1325 69.3326C89.1683 74.0527 86.9436 78.4235 83.6946 81.9805C80.4456 85.5376 76.2937 88.1481 71.68 89.5347C67.0663 90.9213 62.1632 91.0323 57.4915 89.8557C52.8199 88.6791 48.5542 86.259 45.1477 82.8525C41.7411 79.446 39.321 75.1803 38.1445 70.5086C36.9679 65.837 37.0788 60.9338 38.4654 56.3201C39.852 51.7065 42.4625 47.5546 46.0196 44.3056C49.5767 41.0565 53.9474 38.8318 58.6675 37.8677" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="icon-selector p-2" data-icon="3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                    <path class="path-primary" d="M110.453 85.8115L84.2645 112H69.332V97.0678L95.5208 70.879C96.5179 69.9027 97.8578 69.356 99.2533 69.356C100.649 69.356 101.989 69.9027 102.986 70.879L110.453 78.3465C111.43 79.3437 111.978 80.6842 111.978 82.0803C111.978 83.4764 111.43 84.8143 110.453 85.8115Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="path-secondary" d="M90.6679 49.4415C90.6935 48.9602 90.6935 48.4798 90.6679 48.0002C90.6511 41.7749 88.8189 35.6897 85.3956 30.4901C81.9724 25.2905 77.1069 21.2022 71.3952 18.7263C65.6834 16.2503 59.3735 15.4942 53.2384 16.5504C47.1034 17.6067 41.4097 20.4295 36.8548 24.6731C32.3 28.9166 29.0818 34.3966 27.5946 40.4417C26.1073 46.4867 26.4156 52.8343 28.4817 58.7067C30.5478 64.5792 34.2819 69.7215 39.2266 73.5036C44.1713 77.2858 50.1118 79.5435 56.3203 80.0002" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="path-secondary" d="M48 112C24.2688 110.029 16 101.333 16 101.333V96.0003C16.0198 90.3508 17.8327 84.8536 21.1774 80.3007C24.5222 75.7478 29.2261 72.3743 34.6112 70.6665" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="icon-selector p-2" data-icon="4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                    <path class="path-primary" d="M16 64C37.3325 64 85.3325 53.3325 106.668 16" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="path-primary" d="M85.332 16H106.667L112 37.3325" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="path-secondary" d="M32 112H16V90.6675H32V112ZM74.6675 80H58.6675V112H74.6675V80ZM117.332 58.6675H101.332V112H117.332V58.6675Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- SVG Container -->
+        <div class="svg-container" id="svgContainer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                <path class="path-primary" d="M64 37.3325C64.0454 33.2008 65.0292 29.1335 66.8773 25.4379C68.7253 21.7422 71.3892 18.515 74.6675 16" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path class="path-secondary" d="M106.24 66.0275C103.573 90.2937 92.3727 112 81.014 112C73.6003 112 71.8927 106.667 64.0003 106.667C56.1078 106.667 54.3491 112 46.9865 112C35.6278 112 24.4278 90.2912 21.7603 66.0275C19.8915 48.7987 24.2127 38.08 34.6678 33.7075C48.0003 28.1062 55.5215 37.3324 64.0003 37.3324C72.4815 37.3324 80.0003 28.1062 93.2815 33.7075C103.734 38.08 108.16 48.7987 106.24 66.0275Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        
+        <!-- Controles -->
+        <div class="space-y-4">
+            <!-- Seletor de Tema -->
+            <div class="flex justify-center">
+                <button id="darkModeToggle" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block fill-current mr-2" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                    </svg>
+                    Toggle Theme
+                </button>
+            </div>
+            
+            <!-- Paleta de Cores -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col items-center space-y-2">
+                    <label for="colorPicker1" class="text-sm text-slate-700 dark:text-slate-300">Primary Color</label>
+                    <input type="color" id="colorPicker1" value="#DCCCEA" class="w-10 h-10">
+                </div>
+                <div class="flex flex-col items-center space-y-2">
+                    <label for="colorPicker2" class="text-sm text-slate-700 dark:text-slate-300">Secondary Color</label>
+                    <input type="color" id="colorPicker2" value="#BBD8EC" class="w-10 h-10">
+                </div>
+            </div>
+            
+            <!-- Paletas Predefinidas -->
+            <div>
+                <h3 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 text-center">Predefined Palettes</h3>
+                <div class="grid grid-cols-4 gap-2">
+                    <button class="palette-btn h-8 rounded-md bg-gradient-to-r from-[#DCCCEA] to-[#BBD8EC]" data-primary="#DCCCEA" data-secondary="#BBD8EC"></button>
+                    <button class="palette-btn h-8 rounded-md bg-gradient-to-r from-[#FFD6A5] to-[#FFADAD]" data-primary="#FFD6A5" data-secondary="#FFADAD"></button>
+                    <button class="palette-btn h-8 rounded-md bg-gradient-to-r from-[#A0E7E5] to-[#B4F8C8]" data-primary="#A0E7E5" data-secondary="#B4F8C8"></button>
+                    <button class="palette-btn h-8 rounded-md bg-gradient-to-r from-[#FBE7C6] to-[#B4F8C8]" data-primary="#FBE7C6" data-secondary="#B4F8C8"></button>
+                </div>
+            </div>
+            
+            <!-- Botão de Download -->
+            <div class="flex justify-center mt-4">
+                <button id="downloadBtn" class="btn-download flex items-center justify-center px-6 py-3 rounded-md font-medium transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Download SVG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const colorPicker1 = document.getElementById('colorPicker1');
+        const colorPicker2 = document.getElementById('colorPicker2');
+        const paletteButtons = document.querySelectorAll('.palette-btn');
+        const iconSelectors = document.querySelectorAll('.icon-selector');
+        const svgContainer = document.getElementById('svgContainer');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const htmlElement = document.documentElement;
+        
+        // SVGs
+        const svgs = [
+            // Ícone 0
+            `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                <path class="path-primary" d="M64 37.3325C64.0454 33.2008 65.0292 29.1335 66.8773 25.4379C68.7253 21.7422 71.3892 18.515 74.6675 16" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path class="path-secondary" d="M106.24 66.0275C103.573 90.2937 92.3727 112 81.014 112C73.6003 112 71.8927 106.667 64.0003 106.667C56.1078 106.667 54.3491 112 46.9865 112C35.6278 112 24.4278 90.2912 21.7603 66.0275C19.8915 48.7987 24.2127 38.08 34.6678 33.7075C48.0003 28.1062 55.5215 37.3324 64.0003 37.3324C72.4815 37.3324 80.0003 28.1062 93.2815 33.7075C103.734 38.08 108.16 48.7987 106.24 66.0275Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`,
+            // Ícone 1
+            `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                <path class="path-primary" d="M37.3325 64V101.332L26.6675 112L16 101.332V64C16 62.5857 16.5618 61.2294 17.5618 60.2293C18.5619 59.2293 19.9182 58.6675 21.3325 58.6675H32C33.4143 58.6675 34.7706 59.2293 35.7706 60.2293C36.7707 61.2294 37.3325 62.5857 37.3325 64Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path class="path-secondary" d="M112 85.3325H101.332M112 42.6675H101.332M112 64H101.332M58.6671 112H101.332C102.747 112 104.103 111.438 105.104 110.438C106.104 109.438 106.666 108.082 106.667 106.668V21.3325C106.667 20.632 106.529 19.9384 106.261 19.2912C105.993 18.6441 105.6 18.0561 105.104 17.5609C104.609 17.0657 104.021 16.673 103.373 16.4052C102.726 16.1373 102.033 15.9997 101.332 16H42.6671C41.9666 15.9997 41.2729 16.1373 40.6256 16.4052C39.9784 16.673 39.3902 17.0657 38.8948 17.5609C38.3993 18.0561 38.0063 18.6441 37.7382 19.2912C37.47 19.9384 37.332 20.632 37.332 21.3325V37.3325" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`,
+            // Ícone 2
+            `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                <path class="path-primary" d="M80.0004 48L66.668 61.3325M80.0004 48V32L96.0004 16V32H112L96.0004 48H80.0004Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path class="path-secondary" d="M65.7613 16H64C54.5065 16 45.2262 18.8152 37.3327 24.0895C29.4391 29.3638 23.2868 36.8603 19.6538 45.6312C16.0208 54.4021 15.0702 64.0533 16.9223 73.3643C18.7744 82.6754 23.346 91.2282 30.0589 97.9411C36.7718 104.654 45.3246 109.226 54.6357 111.078C63.9468 112.93 73.598 111.979 82.3688 108.346C91.1397 104.713 98.6363 98.5609 103.911 90.6674C109.185 82.7738 112 73.4935 112 64V62.2413" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path class="path-secondary" d="M90.1325 69.3326C89.1683 74.0527 86.9436 78.4235 83.6946 81.9805C80.4456 85.5376 76.2937 88.1481 71.68 89.5347C67.0663 90.9213 62.1632 91.0323 57.4915 89.8557C52.8199 88.6791 48.5542 86.259 45.1477 82.8525C41.7411 79.446 39.321 75.1803 38.1445 70.5086C36.9679 65.837 37.0788 60.9338 38.4654 56.3201C39.852 51.7065 42.4625 47.5546 46.0196 44.3056C49.5767 41.0565 53.9474 38.8318 58.6675 37.8677" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`,
+            // Ícone 3
+            `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                <path class="path-primary" d="M110.453 85.8115L84.2645 112H69.332V97.0678L95.5208 70.879C96.5179 69.9027 97.8578 69.356 99.2533 69.356C100.649 69.356 101.989 69.9027 102.986 70.879L110.453 78.3465C111.43 79.3437 111.978 80.6842 111.978 82.0803C111.978 83.4764 111.43 84.8143 110.453 85.8115Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path class="path-secondary" d="M90.6679 49.4415C90.6935 48.9602 90.6935 48.4798 90.6679 48.0002C90.6511 41.7749 88.8189 35.6897 85.3956 30.4901C81.9724 25.2905 77.1069 21.2022 71.3952 18.7263C65.6834 16.2503 59.3735 15.4942 53.2384 16.5504C47.1034 17.6067 41.4097 20.4295 36.8548 24.6731C32.3 28.9166 29.0818 34.3966 27.5946 40.4417C26.1073 46.4867 26.4156 52.8343 28.4817 58.7067C30.5478 64.5792 34.2819 69.7215 39.2266 73.5036C44.1713 77.2858 50.1118 79.5435 56.3203 80.0002" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path class="path-secondary" d="M48 112C24.2688 110.029 16 101.333 16 101.333V96.0003C16.0198 90.3508 17.8327 84.8536 21.1774 80.3007C24.5222 75.7478 29.2261 72.3743 34.6112 70.6665" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`,
+            // Ícone 4
+            `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 128" fill="none">
+                <path class="path-primary" d="M16 64C37.3325 64 85.3325 53.3325 106.668 16" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path class="path-primary" d="M85.332 16H106.667L112 37.3325" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path class="path-secondary" d="M32 112H16V90.6675H32V112ZM74.6675 80H58.6675V112H74.6675V80ZM117.332 58.6675H101.332V112H117.332V58.6675Z" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`
+        ];
+        
+        // Cores padrão
+        const defaultColors = {
+            light: {
+                primary: '#DCCCEA',
+                secondary: '#BBD8EC'
+            },
+            dark: {
+                primary: '#9C8DB3',
+                secondary: '#7BA7C5'
+            }
+        };
+        
+        // Função para aplicar cores ao SVG
+        function applyColors(primaryColor, secondaryColor) {
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+            
+            // Calcular cores mais escuras para o modo escuro
+            const primaryDark = adjustColorBrightness(primaryColor, -30);
+            const secondaryDark = adjustColorBrightness(secondaryColor, -30);
+            
+            document.documentElement.style.setProperty('--primary-color-dark', primaryDark);
+            document.documentElement.style.setProperty('--secondary-color-dark', secondaryDark);
+            
+            // Atualizar os color pickers
+            colorPicker1.value = primaryColor;
+            colorPicker2.value = secondaryColor;
+        }
+        
+        // Função para ajustar o brilho de uma cor
+        function adjustColorBrightness(hex, percent) {
+            hex = hex.replace(/^#/, '');
+            if (hex.length === 3) hex = hex.split('').map(char => char + char).join('');
+            
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+            
+            r = Math.max(0, Math.min(255, Math.round(r * (1 + percent / 100))));
+            g = Math.max(0, Math.min(255, Math.round(g * (1 + percent / 100))));
+            b = Math.max(0, Math.min(255, Math.round(b * (1 + percent / 100))));
+            
+            const toHex = c => ('0' + c.toString(16)).slice(-2);
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+        
+        // Função para trocar o ícone SVG
+        function changeIcon(iconIndex) {
+            svgContainer.innerHTML = svgs[iconIndex];
+            
+            // Atualizar seleção visual
+            iconSelectors.forEach(selector => {
+                selector.classList.remove('selected');
+            });
+            iconSelectors[iconIndex].classList.add('selected');
+        }
+        
+        // Função para fazer download do SVG
+        function downloadSVG() {
+            // Obter o SVG atual
+            const svgElement = svgContainer.querySelector('svg');
+            
+            // Adicionar namespace ao SVG (necessário para download)
+            svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            
+            // Obter as cores atuais
+            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+            const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim();
+            
+            // Criar uma cópia do SVG com cores inline para download
+            const svgCopy = svgElement.cloneNode(true);
+            
+            // Aplicar cores diretamente aos paths
+            svgCopy.querySelectorAll('.path-primary').forEach(path => {
+                path.setAttribute('stroke', primaryColor);
+                path.classList.remove('path-primary');
+            });
+            
+            svgCopy.querySelectorAll('.path-secondary').forEach(path => {
+                path.setAttribute('stroke', secondaryColor);
+                path.classList.remove('path-secondary');
+            });
+            
+            // Converter SVG para string
+            const serializer = new XMLSerializer();
+            let svgString = serializer.serializeToString(svgCopy);
+            
+            // Codificar para URL
+            const svgBlob = new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
+            const svgUrl = URL.createObjectURL(svgBlob);
+            
+            // Criar link de download
+            const downloadLink = document.createElement('a');
+            downloadLink.href = svgUrl;
+            downloadLink.download = 'icon.svg';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            // Liberar URL
+            URL.revokeObjectURL(svgUrl);
+        }
+        
+        // Verificar preferência do sistema ou localStorage
+        if (localStorage.getItem('darkMode') === 'true' || 
+            (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+        
+        // Alternar modo escuro
+        darkModeToggle.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', htmlElement.classList.contains('dark') ? 'true' : 'false');
+            applyColors(
+                htmlElement.classList.contains('dark') ? defaultColors.dark.primary : defaultColors.light.primary,
+                htmlElement.classList.contains('dark') ? defaultColors.dark.secondary : defaultColors.light.secondary
+            );
+        });
+        
+        // Eventos para os color pickers
+        colorPicker1.addEventListener('input', () => {
+            const primaryColor = colorPicker1.value;
+            const secondaryColor = colorPicker2.value;
+            applyColors(primaryColor, secondaryColor);
+        });
+        
+        colorPicker2.addEventListener('input', () => {
+            const primaryColor = colorPicker1.value;
+            const secondaryColor = colorPicker2.value;
+            applyColors(primaryColor, secondaryColor);
+        });
+        
+        // Eventos para os botões de paleta
+        paletteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const primaryColor = button.dataset.primary;
+                const secondaryColor = button.dataset.secondary;
+                applyColors(primaryColor, secondaryColor);
+            });
+        });
+        
+        // Eventos para os seletores de ícones
+        iconSelectors.forEach(selector => {
+            selector.addEventListener('click', () => {
+                const iconIndex = selector.dataset.icon;
+                changeIcon(iconIndex);
+            });
+        });
+        
+        // Evento para o botão de download
+        downloadBtn.addEventListener('click', downloadSVG);
+        
+        // Inicializar com as cores padrão
+        applyColors(defaultColors.light.primary, defaultColors.light.secondary);
+    </script>
+</body>
+</html>

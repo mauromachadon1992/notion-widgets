@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="pt-BR" class="h-full dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimalist Mono Calendar for Notion</title>
+    <title>Calendário Minimalista Responsivo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Import: IBM Plex Mono and Inter (fallback) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,7 +33,7 @@
             }
         }
     </script>
-    <style type="text/tailwindcss">
+    <style>
         html, body {
             height: 100%;
             width: 100%;
@@ -41,24 +41,69 @@
             padding: 0;
             overflow: hidden;
         }
-    </style>
-    <script>
-        (function() {
-            function applyTheme() {
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
+        
+        #colorPicker {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: transparent;
+            border: 1px solid #94a3b8;
+            border-radius: 4px;
+            padding: 0;
+        }
+
+        .dark #colorPicker {
+            border-color: #475569;
+        }
+
+        #colorPicker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        #colorPicker::-webkit-color-swatch {
+            border: none;
+            border-radius: 3px;
+        }
+
+        #colorPicker::-moz-color-swatch {
+            border: none;
+            border-radius: 3px;
+        }
+        
+        /* Estilos responsivos para o calendário */
+        @media (max-width: 640px) {
+            .calendar-year-month {
+                font-size: 5vmin !important;
             }
-            applyTheme();
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
-        })();
-    </script>
+            .calendar-today-date-wrapper {
+                font-size: 3vmin !important;
+            }
+            .day-name {
+                font-size: 3vmin !important;
+            }
+            .date-cell {
+                min-height: 8vmin !important;
+                font-size: 4vmin !important;
+            }
+        }
+    </style>
 </head>
-<body class="bg-transparent font-sans flex items-center justify-center transition-colors duration-300">
-    <div class="calendar-widget-container w-full h-full p-[1.5vmin] bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-lg shadow-lg font-mono">
-        <div class="calendar w-full h-full flex flex-col"></div>
+<body class="bg-slate-100 dark:bg-slate-900 font-sans flex flex-col h-full w-full transition-colors duration-300">
+    <div class="calendar-widget-container w-full h-full flex flex-col p-[1.5vmin] sm:p-[2vmin] md:p-[3vmin] bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono">
+        <!-- Controles superiores: seletor de cores e botão de tema -->
+        <div class="controls-container flex items-center justify-between mb-[1.5vmin]">
+            <div class="color-picker-container flex items-center">
+                <label for="colorPicker" class="text-[2vmin] sm:text-[1.8vmin] mr-[1vmin] sm:mr-[1.5vmin] text-slate-700 dark:text-slate-300">Theme:</label>
+                <input type="color" id="colorPicker" value="#2196F3" class="w-[5vmin] sm:w-[4vmin] h-[4vmin] sm:h-[3.5vmin]">
+            </div>
+            <button id="darkModeToggle" class="p-[1vmin] sm:p-[1.2vmin] text-[2vmin] sm:text-[1.8vmin] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-[2.5vmin] w-[2.5vmin] inline-block fill-current" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+            </button>
+        </div>
+        
+        <div class="calendar w-full flex-grow flex flex-col"></div>
     </div>
 
     <script>
@@ -66,8 +111,8 @@
         const calendar = new Date();
         const calendarControl = {
             localDate: new Date(),
-            calWeekDays: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], // Uppercase
-            calMonthName: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], // Uppercase
+            calWeekDays: ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"], // Dias em português
+            calMonthName: ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"], // Meses em português
             
             daysInMonth: function(month, year) {
                 return new Date(year, month, 0).getDate();
@@ -99,34 +144,50 @@
                 const dateStr = e.currentTarget.dataset.date;
                 if (!dateStr) return;
                 const [day, monthName, year] = dateStr.split(' ');
-                console.log(`Selected: ${day} ${monthName} ${year}`);
+                console.log(`Selecionado: ${day} ${monthName} ${year}`);
+                
+                // Destacar a data selecionada
+                document.querySelectorAll(".date-cell.selected").forEach(cell => {
+                    cell.classList.remove("selected");
+                    // Restaurar classes originais
+                    if (cell.classList.contains("calendar-today")) {
+                        cell.classList.add("bg-accent", "dark:bg-accent-dark", "text-white", "font-semibold");
+                    }
+                });
+                
+                // Adicionar classe selecionada
+                e.currentTarget.classList.add("selected");
+                
+                // Aplicar estilo de seleção
+                if (!e.currentTarget.classList.contains("calendar-today")) {
+                    e.currentTarget.classList.add("bg-accent/20", "dark:bg-accent-dark/20", "border-accent", "dark:border-accent-dark");
+                }
             },
 
             renderCalendar: function() {
                 const calendarDiv = document.querySelector(".calendar-widget-container .calendar");
                 if (!calendarDiv) return;
 
-                // Removido o style="font-size: 1.8vmin;" do .calendar-inner pois os filhos definem seus próprios tamanhos.
                 calendarDiv.innerHTML = `
                     <div class="calendar-inner w-full h-full flex flex-col">
                         <div class="calendar-controls flex items-center justify-between p-[1vmin] border-b border-slate-200 dark:border-slate-700" style="padding-bottom: 1.5vmin; margin-bottom: 1vmin;">
-                            <button class="calendar-prev p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Previous Month" style="font-size: 3.2vmin;">&lt;</button>
+                            <button class="calendar-prev p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Mês Anterior" style="font-size: 3.2vmin;">&lt;</button>
                             <div class="calendar-year-month text-center" style="font-size: 3.2vmin; font-weight: 600;">
                                 <span class="calendar-month-label">${calendarControl.calMonthName[calendar.getMonth()]}</span>
                                 <span>-</span>
                                 <span class="calendar-year-label">${calendar.getFullYear()}</span>
                             </div>
-                            <button class="calendar-next p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Next Month" style="font-size: 3.2vmin;">&gt;</button>
+                            <button class="calendar-next p-[1vmin] rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Próximo Mês" style="font-size: 3.2vmin;">&gt;</button>
                         </div>
 
-                        <div class="calendar-today-date-wrapper text-center p-[1vmin] cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors" title="Go to Today" style="font-size: 2.2vmin; margin-bottom: 1vmin;">
-                            TODAY: ${calendarControl.calWeekDays[calendarControl.localDate.getDay()]}, 
+                        <div class="calendar-today-date-wrapper text-center p-[1vmin] cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors" title="Ir para Hoje" style="font-size: 2.2vmin; margin-bottom: 1vmin;">
+                            HOJE: ${calendarControl.calWeekDays[calendarControl.localDate.getDay()]}, 
                             ${calendarControl.localDate.getDate()} 
                             ${calendarControl.calMonthName[calendarControl.localDate.getMonth()]} 
                             ${calendarControl.localDate.getFullYear()}
                         </div>
 
-                        <div class="calendar-body grid grid-cols-7 gap-[0.5vmin] flex-grow items-stretch content-stretch">
+                        <div class="calendar-body grid grid-cols-7 gap-[0.5vmin] flex-grow">
                             ${calendarControl.calWeekDays.map(day => `
                                 <div class="day-name text-center font-semibold text-slate-500 dark:text-slate-400 py-[0.5vmin] border-b border-slate-200 dark:border-slate-600" style="font-size: 2.2vmin;">
                                     ${day.substring(0,3)}
@@ -157,7 +218,7 @@
                     
                     let cellClasses = "date-cell flex items-center justify-center p-[0.5vmin] rounded cursor-pointer border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors";
                     if (isToday) {
-                        cellClasses = "date-cell flex items-center justify-center p-[0.5vmin] rounded cursor-pointer border border-slate-200 dark:border-slate-600 calendar-today bg-accent dark:bg-accent-dark text-white font-semibold hover:bg-accent/90 dark:hover:bg-accent-dark/90";
+                        cellClasses = "date-cell calendar-today flex items-center justify-center p-[0.5vmin] rounded cursor-pointer border border-slate-200 dark:border-slate-600 bg-accent dark:bg-accent-dark text-white font-semibold hover:bg-accent/90 dark:hover:bg-accent-dark/90";
                     }
                     
                     cellsHTML += `
@@ -168,7 +229,7 @@
                 
                 const totalCellsSoFar = firstDay + daysInCurrentMonth;
                 const remainingCells = (7 - (totalCellsSoFar % 7)) % 7;
-                 for (let i = 0; i < remainingCells; i++) {
+                for (let i = 0; i < remainingCells; i++) {
                     cellsHTML += `<div class="date-cell empty p-[0.5vmin] border border-transparent"></div>`;
                 }
                 return cellsHTML;
@@ -192,7 +253,142 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Inicializa o calendário
         const calendarControlInstance = new CalendarControl();
+        
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const htmlElement = document.documentElement;
+
+        // Verifica preferência do sistema ou localStorage
+        if (localStorage.getItem('darkMode') === 'true' || 
+            (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            // Salva a preferência do usuário
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+
+        // LÓGICA DO SELETOR DE CORES
+        const colorPicker = document.getElementById("colorPicker");
+        const styleTagId = "custom-theme-styles";
+
+        function applyThemeColor(color) {
+            const lighterColor = adjustColorBrightness(color, 40);
+            const darkerColor = adjustColorBrightness(color, -20);
+            const focusRingColor = adjustColorBrightness(color, 10);
+
+            // Atualiza as variáveis CSS personalizadas
+            let styleTag = document.getElementById(styleTagId);
+            if (!styleTag) {
+                styleTag = document.createElement('style');
+                styleTag.id = styleTagId;
+                document.head.appendChild(styleTag);
+            }
+            
+            styleTag.innerHTML = `
+                :root {
+                    --accent-color: ${color};
+                    --accent-color-dark: ${adjustColorBrightness(color, 10)};
+                    --accent-color-light: ${lighterColor};
+                    --accent-color-lighter: ${adjustColorBrightness(color, 80)};
+                    --accent-color-darker: ${darkerColor};
+                }
+                
+                .bg-accent {
+                    background-color: var(--accent-color) !important;
+                }
+                
+                .dark .bg-accent-dark {
+                    background-color: var(--accent-color-dark) !important;
+                }
+                
+                .hover\\:bg-accent\\/90:hover {
+                    background-color: ${color}E6 !important;
+                }
+                
+                .dark .hover\\:bg-accent-dark\\/90:hover {
+                    background-color: ${adjustColorBrightness(color, 10)}E6 !important;
+                }
+                
+                .bg-accent\\/20 {
+                    background-color: ${color}33 !important;
+                }
+                
+                .dark .bg-accent-dark\\/20 {
+                    background-color: ${adjustColorBrightness(color, 10)}33 !important;
+                }
+                
+                .border-accent {
+                    border-color: var(--accent-color) !important;
+                }
+                
+                .dark .border-accent-dark {
+                    border-color: var(--accent-color-dark) !important;
+                }
+                
+                .calendar-controls button:focus,
+                #darkModeToggle:focus,
+                .calendar-today-date-wrapper:focus {
+                    outline: 2px solid ${focusRingColor};
+                    outline-offset: 2px;
+                }
+                
+                #colorPicker:focus-visible {
+                    outline: 2px solid ${focusRingColor};
+                    outline-offset: 1px;
+                }
+            `;
+            
+            // Atualiza o calendário para refletir a nova cor
+            const calendarInstance = new CalendarControl();
+        }
+
+        function adjustColorBrightness(hex, percent) {
+            hex = hex.replace(/^#/, '');
+            if (hex.length === 3) hex = hex.split('').map(char => char + char).join('');
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+            r = Math.max(0, Math.min(255, Math.round(r * (1 + percent / 100))));
+            g = Math.max(0, Math.min(255, Math.round(g * (1 + percent / 100))));
+            b = Math.max(0, Math.min(255, Math.round(b * (1 + percent / 100))));
+            const toHex = c => ('0' + c.toString(16)).slice(-2);
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+
+        // Verificar se há uma cor salva no localStorage ao carregar a página
+        const savedColor = localStorage.getItem("calendarThemeColor");
+        const defaultColor = "#2196F3"; // Cor padrão se nada estiver salvo
+
+        if (savedColor) {
+            colorPicker.value = savedColor;
+            applyThemeColor(savedColor);
+        } else {
+            colorPicker.value = defaultColor; // Define o valor do picker para o padrão
+            applyThemeColor(defaultColor); // Aplica a cor padrão inicialmente
+        }
+
+        // Aplicar a cor enquanto o usuário seleciona (live update)
+        colorPicker.addEventListener("input", function(event) {
+            const selectedColor = event.target.value;
+            applyThemeColor(selectedColor);
+        });
+
+        // Salvar a cor quando o usuário finalizar a seleção
+        colorPicker.addEventListener("change", function(event) {
+            const selectedColor = event.target.value;
+            localStorage.setItem("calendarThemeColor", selectedColor);
+        });
     });
     </script>
 </body>

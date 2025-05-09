@@ -4,222 +4,494 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora com Seletor de Cores</title>
+    <title>Calculadora Minimalista Responsiva</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class', // Habilita o modo escuro baseado em classe
+            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        // Cores personalizadas se necessário
-                    }
+                    colors: {}
                 }
             }
         }
     </script>
     <style>
-        /* Estilos adicionais se necessário */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #e5e7eb; /* light gray background */
-        }
-        .dark body {
-            background-color: #1f2937; /* dark gray background for dark mode */
-        }
-        .calculator {
-            width: clamp(280px, 90vmin, 400px); /* Responsividade do tamanho da calculadora */
-            height: auto;
-        }
-        /* Ajustes para o input de cor */
         #colorPicker {
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
             background-color: transparent;
-            border: 1px solid #ccc;
+            border: 1px solid #94a3b8;
             border-radius: 4px;
-            padding: 0; /* Remove padding interno para melhor visualização da cor */
+            padding: 0;
         }
+
+        .dark #colorPicker {
+            border-color: #475569;
+        }
+
         #colorPicker::-webkit-color-swatch-wrapper {
             padding: 0;
         }
+
         #colorPicker::-webkit-color-swatch {
             border: none;
-            border-radius: 4px; /* Arredonda o swatch interno */
+            border-radius: 3px;
         }
+
         #colorPicker::-moz-color-swatch {
             border: none;
-            border-radius: 4px;
+            border-radius: 3px;
+        }
+        
+        /* Adicionado: Estilo para o visor de expressão e resultado */
+        .screen-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            background-color: #f1f5f9; /* slate-100 */
+            border: 1px solid #cbd5e1; /* slate-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .dark .screen-container {
+            background-color: #1e293b; /* slate-800 */
+            border-color: #475569; /* slate-600 */
+        }
+        
+        .expression {
+            font-size: calc(3vmin + 0.5rem);
+            color: #64748b; /* slate-500 */
+            min-height: calc(3vmin + 0.5rem);
+            width: 100%;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .dark .expression {
+            color: #94a3b8; /* slate-400 */
+        }
+        
+        .result {
+            font-size: calc(5vmin + 0.5rem);
+            color: #0f172a; /* slate-900 */
+            width: 100%;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .dark .result {
+            color: #f8fafc; /* slate-50 */
         }
     </style>
 </head>
 
-<body>
+<body class="min-h-screen flex flex-col bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
 
-    <div class="calculator bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700
-                w-full h-full font-mono flex flex-col p-[1.5vmin]">
-
-        <!-- Seletor de Cores -->
-        <div class="color-picker-container flex items-center mb-[1.5vmin] justify-between">
-            <label for="colorPicker" class="text-[1.8vmin] mr-[1vmin] text-slate-700 dark:text-slate-300">Cor do Tema:</label>
-            <input type="color" id="colorPicker" value="#64748b" class="w-[6vmin] h-[3.5vmin] cursor-pointer">
+    <div class="calculator bg-transparent w-full flex-grow font-mono flex flex-col p-[2vmin] sm:p-[3vmin] md:p-[4vmin]">
+        <div class="controls-container flex items-center justify-between mb-[1.5vmin] sm:mb-[2vmin]">
+            <div class="color-picker-container flex items-center">
+                <label for="colorPicker" class="text-[2vmin] sm:text-[1.8vmin] mr-[1vmin] sm:mr-[1.5vmin] text-slate-700 dark:text-slate-300">Theme:</label>
+                <input type="color" id="colorPicker" value="#64748b" class="w-[7vmin] sm:w-[6vmin] h-[4vmin] sm:h-[3.5vmin] cursor-pointer">
+            </div>
+            <button id="darkModeToggle" class="p-[1vmin] sm:p-[1.2vmin] text-[2vmin] sm:text-[1.8vmin] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-[2.5vmin] w-[2.5vmin] inline-block fill-current" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+            </button>
         </div>
 
-        <!-- Visor da Calculadora -->
-        <input type="text" id="screen" readonly
-            class="screen bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100
-                   text-right text-[5vmin] p-[2vmin] mb-[1.5vmin] rounded-md w-full
-                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400
-                   border border-slate-300 dark:border-slate-600">
-
-        <!-- Botões da Calculadora -->
-        <div class="buttons grid grid-cols-4 gap-[1vmin] flex-grow">
-            <!-- Linha 1 -->
-            <button onclick="clearScreen()" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">AC</button>
-            <button onclick="toggleSign()" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">+/-</button>
-            <button onclick="inputOperator('%')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">%</button>
-            <button onclick="inputOperator('/')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">÷</button>
-
-            <!-- Linha 2 -->
-            <button onclick="inputDigit('7')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">7</button>
-            <button onclick="inputDigit('8')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">8</button>
-            <button onclick="inputDigit('9')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">9</button>
-            <button onclick="inputOperator('*')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">×</button>
-
-            <!-- Linha 3 -->
-            <button onclick="inputDigit('4')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">4</button>
-            <button onclick="inputDigit('5')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">5</button>
-            <button onclick="inputDigit('6')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">6</button>
-            <button onclick="inputOperator('-')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">-</button>
-
-            <!-- Linha 4 -->
-            <button onclick="inputDigit('1')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">1</button>
-            <button onclick="inputDigit('2')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">2</button>
-            <button onclick="inputDigit('3')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">3</button>
-            <button onclick="inputOperator('+')" class="button btn-op text-[2.5vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">+</button>
-
-            <!-- Linha 5 -->
-            <button onclick="inputDigit('0')" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md col-span-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">0</button>
-            <button onclick="inputDecimal()" class="button btn-num text-[2.5vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">.</button>
-            <button onclick="calculate()" class="button btn-equals text-[2.5vmin] p-[2vmin] bg-slate-500 dark:bg-slate-500 hover:bg-slate-600 dark:hover:bg-slate-400 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors">=</button>
+        <!-- Substituído: Novo visor com expressão e resultado -->
+        <div class="screen-container focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-slate-500 dark:focus-within:ring-slate-400">
+            <div id="expression" class="expression"></div>
+            <div id="result" class="result">0</div>
         </div>
 
-        <!-- Botão Dark Mode -->
-        <button id="darkModeToggle" class="mt-[1.5vmin] p-[1vmin] text-[1.8vmin] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors w-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-slate-400">
-            Modo Escuro/Claro
-        </button>
+        <div class="buttons grid grid-cols-4 gap-[1vmin] sm:gap-[1.5vmin] flex-grow">
+            <button onclick="clearAll()" class="button btn-op text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">AC</button>
+            <button onclick="clearEntry()" class="button btn-op text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">CE</button>
+            <button onclick="inputOperator('%')" class="button btn-op text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">%</button>
+            <button onclick="inputOperator('/')" class="button btn-op text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">÷</button>
+
+            <button onclick="inputDigit('7')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">7</button>
+            <button onclick="inputDigit('8')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">8</button>
+            <button onclick="inputDigit('9')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">9</button>
+            <button onclick="inputOperator('*')" class="button btn-op text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">×</button>
+
+            <button onclick="inputDigit('4')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">4</button>
+            <button onclick="inputDigit('5')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">5</button>
+            <button onclick="inputDigit('6')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">6</button>
+            <button onclick="inputOperator('-')" class="button btn-op text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">-</button>
+
+            <button onclick="inputDigit('1')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">1</button>
+            <button onclick="inputDigit('2')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">2</button>
+            <button onclick="inputDigit('3')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">3</button>
+            <button onclick="inputOperator('+')" class="button btn-op text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">+</button>
+
+            <button onclick="toggleSign()" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">+/-</button>
+            <button onclick="inputDigit('0')" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">0</button>
+            <button onclick="inputDecimal()" class="button btn-num text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">.</button>
+            <button onclick="calculate()" class="button btn-equals text-[3vmin] sm:text-[2.8vmin] p-[2vmin] bg-slate-500 dark:bg-slate-500 hover:bg-slate-600 dark:hover:bg-slate-400 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors">=</button>
+        </div>
     </div>
 
     <script>
-        const screen = document.getElementById('screen');
-        let currentInput = '0';
-        let operator = null;
-        let previousInput = null;
-        let waitingForSecondOperand = false;
-
-        function updateScreen() {
-            screen.value = currentInput;
-        }
-
-        function inputDigit(digit) {
-            if (waitingForSecondOperand) {
-                currentInput = digit;
-                waitingForSecondOperand = false;
-            } else {
-                currentInput = currentInput === '0' ? digit : currentInput + digit;
-            }
-            updateScreen();
-        }
-
-        function inputDecimal() {
-            if (waitingForSecondOperand) {
-                currentInput = '0.';
-                waitingForSecondOperand = false;
-                updateScreen();
-                return;
-            }
-            if (!currentInput.includes('.')) {
-                currentInput += '.';
-            }
-            updateScreen();
-        }
-
-        function clearScreen() {
-            currentInput = '0';
-            operator = null;
-            previousInput = null;
-            waitingForSecondOperand = false;
-            updateScreen();
-        }
-
-        function inputOperator(nextOperator) {
-            const inputValue = parseFloat(currentInput);
-
-            if (operator && waitingForSecondOperand) {
-                operator = nextOperator;
-                return;
-            }
-
-            if (previousInput === null) {
-                previousInput = inputValue;
-            } else if (operator) {
-                const result = performCalculation[operator](previousInput, inputValue);
-                currentInput = String(parseFloat(result.toFixed(7))); // Limita casas decimais
-                previousInput = result;
-            }
-
-            waitingForSecondOperand = true;
-            operator = nextOperator;
-            updateScreen();
+        // Elementos do visor
+        const expressionDisplay = document.getElementById('expression');
+        const resultDisplay = document.getElementById('result');
+        
+        // Estado da calculadora
+        let currentExpression = '';  // Expressão completa (ex: "2+3*4")
+        let displayExpression = '';  // Expressão formatada para exibição (ex: "2 + 3 × 4")
+        let currentInput = '0';      // Entrada atual
+        let lastResult = null;       // Último resultado calculado
+        let isNewExpression = true;  // Flag para nova expressão após cálculo
+        let hasCalculated = false;   // Flag para indicar se acabou de calcular
+        
+        // Mapeamento de operadores para exibição
+        const operatorDisplay = {
+            '+': ' + ',
+            '-': ' - ',
+            '*': ' × ',
+            '/': ' ÷ ',
+            '%': ' % '
+        };
+        
+        // Atualiza o visor
+        function updateDisplay() {
+            expressionDisplay.textContent = displayExpression;
+            resultDisplay.textContent = currentInput;
         }
         
-        const performCalculation = {
-            '/': (firstOperand, secondOperand) => secondOperand === 0 ? 'Erro' : firstOperand / secondOperand,
-            '*': (firstOperand, secondOperand) => firstOperand * secondOperand,
-            '+': (firstOperand, secondOperand) => firstOperand + secondOperand,
-            '-': (firstOperand, secondOperand) => firstOperand - secondOperand,
-            '%': (firstOperand, secondOperand) => firstOperand * (secondOperand / 100) // Cálculo de porcentagem
-        };
-
-        function calculate() {
-            if (operator === null || waitingForSecondOperand) {
+        // Entrada de dígitos
+        function inputDigit(digit) {
+            // Se acabou de calcular, inicia nova expressão
+            if (hasCalculated) {
+                clearAll();
+                hasCalculated = false;
+            }
+            
+            // Limita o número de dígitos
+            if (currentInput.replace(/[^0-9]/g, '').length >= 15 && !isNewExpression) {
                 return;
             }
-            const inputValue = parseFloat(currentInput);
-            if (operator === '/' && inputValue === 0) {
-                 currentInput = 'Erro';
-                 updateScreen();
-                 operator = null;
-                 previousInput = null;
-                 waitingForSecondOperand = false;
-                 return;
-            }
-            const result = performCalculation[operator](previousInput, inputValue);
             
-            currentInput = String(parseFloat(result.toFixed(7))); // Limita casas decimais
-            operator = null;
-            previousInput = null;
-            waitingForSecondOperand = false;
-            updateScreen();
+            // Se for nova entrada, substitui o zero inicial
+            if (currentInput === '0' || isNewExpression) {
+                currentInput = digit;
+                isNewExpression = false;
+            } else {
+                currentInput += digit;
+            }
+            
+            // Calcula o resultado parcial em tempo real
+            calculatePartialResult();
+            updateDisplay();
         }
-
+        
+        // Entrada de ponto decimal
+        function inputDecimal() {
+            // Se acabou de calcular, inicia nova expressão
+            if (hasCalculated) {
+                clearAll();
+                hasCalculated = false;
+            }
+            
+            // Se for nova entrada, começa com "0."
+            if (isNewExpression) {
+                currentInput = '0.';
+                isNewExpression = false;
+            } else if (!currentInput.includes('.')) {
+                // Adiciona ponto decimal se ainda não tiver
+                currentInput += '.';
+            }
+            
+            updateDisplay();
+        }
+        
+        // Entrada de operador
+        function inputOperator(op) {
+            // Se houver erro, limpa tudo
+            if (currentInput === 'Erro') {
+                clearAll();
+                return;
+            }
+            
+            // Se acabou de calcular, usa o resultado como primeiro operando
+            if (hasCalculated) {
+                currentExpression = currentInput;
+                displayExpression = currentInput;
+                hasCalculated = false;
+            } else if (isNewExpression && currentExpression === '') {
+                // Se for início de expressão, usa o valor atual
+                currentExpression = currentInput;
+                displayExpression = currentInput;
+            } else if (!isNewExpression) {
+                // Adiciona o valor atual à expressão
+                currentExpression += currentInput;
+                displayExpression += currentInput;
+            }
+            
+            // Adiciona o operador à expressão
+            currentExpression += op;
+            displayExpression += operatorDisplay[op];
+            
+            // Prepara para próxima entrada
+            isNewExpression = true;
+            
+            updateDisplay();
+        }
+        
+        // Calcula o resultado parcial em tempo real
+        function calculatePartialResult() {
+            try {
+                // Cria uma expressão temporária com a entrada atual
+                let tempExpression = currentExpression;
+                if (!isNewExpression) {
+                    tempExpression += currentInput;
+                }
+                
+                // Se a expressão estiver vazia, não calcula
+                if (tempExpression === '') {
+                    return;
+                }
+                
+                // Avalia a expressão com a hierarquia correta
+                const result = evaluateExpression(tempExpression);
+                
+                // Atualiza o resultado se for válido
+                if (!isNaN(result) && isFinite(result)) {
+                    lastResult = result;
+                    // Não atualiza currentInput para não interferir na digitação
+                }
+            } catch (e) {
+                // Ignora erros durante o cálculo parcial
+            }
+        }
+        
+        // Calcula o resultado final
+        function calculate() {
+            // Se houver erro, limpa tudo
+            if (currentInput === 'Erro') {
+                clearAll();
+                return;
+            }
+            
+            try {
+                // Completa a expressão com a entrada atual se não for nova expressão
+                let finalExpression = currentExpression;
+                if (!isNewExpression) {
+                    finalExpression += currentInput;
+                    displayExpression += currentInput;
+                }
+                
+                // Se a expressão estiver vazia, mantém o valor atual
+                if (finalExpression === '') {
+                    return;
+                }
+                
+                // Avalia a expressão com a hierarquia correta
+                const result = evaluateExpression(finalExpression);
+                
+                // Atualiza o visor com o resultado
+                if (isNaN(result) || !isFinite(result)) {
+                    currentInput = 'Erro';
+                } else {
+                    // Formata o resultado para limitar casas decimais
+                    currentInput = formatResult(result);
+                    lastResult = result;
+                }
+                
+                // Marca como calculado
+                hasCalculated = true;
+                
+                // Atualiza o visor
+                updateDisplay();
+            } catch (e) {
+                currentInput = 'Erro';
+                updateDisplay();
+            }
+        }
+        
+        // Avalia a expressão respeitando a hierarquia de operações
+        function evaluateExpression(expr) {
+            // Substitui operadores de exibição pelos operadores JavaScript
+            expr = expr.replace(/×/g, '*').replace(/÷/g, '/');
+            
+            // Tokeniza a expressão em números e operadores
+            const tokens = tokenizeExpression(expr);
+            
+            // Aplica o algoritmo Shunting Yard para converter para notação polonesa reversa
+            const rpnTokens = shuntingYard(tokens);
+            
+            // Avalia a expressão em notação polonesa reversa
+            return evaluateRPN(rpnTokens);
+        }
+        
+        // Tokeniza a expressão em números e operadores
+        function tokenizeExpression(expr) {
+            const tokens = [];
+            let numStr = '';
+            
+            for (let i = 0; i < expr.length; i++) {
+                const char = expr[i];
+                
+                if ('0123456789.'.includes(char)) {
+                    // Parte de um número
+                    numStr += char;
+                } else if ('+-*/%'.includes(char)) {
+                    // Operador
+                    if (numStr !== '') {
+                        tokens.push(parseFloat(numStr));
+                        numStr = '';
+                    }
+                    
+                    // Trata operadores unários (+ ou - no início ou após outro operador)
+                    if (char === '-' && (i === 0 || '+-*/%'.includes(expr[i-1]))) {
+                        numStr = '-';
+                    } else {
+                        tokens.push(char);
+                    }
+                }
+            }
+            
+            // Adiciona o último número, se houver
+            if (numStr !== '') {
+                tokens.push(parseFloat(numStr));
+            }
+            
+            return tokens;
+        }
+        
+        // Implementa o algoritmo Shunting Yard para converter para notação polonesa reversa
+        function shuntingYard(tokens) {
+            const output = [];
+            const operators = [];
+            
+            // Precedência dos operadores
+            const precedence = {
+                '+': 1,
+                '-': 1,
+                '*': 2,
+                '/': 2,
+                '%': 2
+            };
+            
+            for (const token of tokens) {
+                if (typeof token === 'number') {
+                    // Número: vai direto para a saída
+                    output.push(token);
+                } else if ('+-*/%'.includes(token)) {
+                    // Operador: aplica regras de precedência
+                    while (
+                        operators.length > 0 &&
+                        precedence[operators[operators.length - 1]] >= precedence[token]
+                    ) {
+                        output.push(operators.pop());
+                    }
+                    operators.push(token);
+                }
+            }
+            
+            // Adiciona os operadores restantes à saída
+            while (operators.length > 0) {
+                output.push(operators.pop());
+            }
+            
+            return output;
+        }
+        
+        // Avalia a expressão em notação polonesa reversa
+        function evaluateRPN(tokens) {
+            const stack = [];
+            
+            for (const token of tokens) {
+                if (typeof token === 'number') {
+                    // Número: empilha
+                    stack.push(token);
+                } else {
+                    // Operador: desempilha operandos, aplica operação e empilha resultado
+                    const b = stack.pop();
+                    const a = stack.pop();
+                    
+                    switch (token) {
+                        case '+': stack.push(a + b); break;
+                        case '-': stack.push(a - b); break;
+                        case '*': stack.push(a * b); break;
+                        case '/': 
+                            if (b === 0) throw new Error('Divisão por zero');
+                            stack.push(a / b); 
+                            break;
+                        case '%': stack.push(a * (b / 100)); break;
+                    }
+                }
+            }
+            
+            // O resultado final é o único valor na pilha
+            return stack[0];
+        }
+        
+        // Formata o resultado para exibição
+        function formatResult(num) {
+            // Converte para string com até 10 casas decimais
+            const str = num.toFixed(10);
+            
+            // Remove zeros à direita e ponto decimal desnecessário
+            return str.replace(/\.?0+$/, '');
+        }
+        
+        // Alterna o sinal do número atual
         function toggleSign() {
-            currentInput = String(parseFloat(currentInput) * -1);
-            updateScreen();
+            if (currentInput === '0' || currentInput === 'Erro') return;
+            
+            if (currentInput.startsWith('-')) {
+                currentInput = currentInput.substring(1);
+            } else {
+                currentInput = '-' + currentInput;
+            }
+            
+            calculatePartialResult();
+            updateDisplay();
+        }
+        
+        // Limpa tudo (AC - All Clear)
+        function clearAll() {
+            currentExpression = '';
+            displayExpression = '';
+            currentInput = '0';
+            lastResult = null;
+            isNewExpression = true;
+            hasCalculated = false;
+            
+            updateDisplay();
+        }
+        
+        // Limpa apenas a entrada atual (CE - Clear Entry)
+        function clearEntry() {
+            currentInput = '0';
+            
+            if (hasCalculated) {
+                clearAll();
+            }
+            
+            updateDisplay();
         }
         
         // Inicializa o visor
-        updateScreen();
+        updateDisplay();
 
         // Dark Mode Toggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const htmlElement = document.documentElement;
 
-        // Verifica preferência do sistema ou localStorage
         if (localStorage.getItem('darkMode') === 'true' || 
             (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             htmlElement.classList.add('dark');
@@ -229,122 +501,153 @@
 
         darkModeToggle.addEventListener('click', () => {
             htmlElement.classList.toggle('dark');
-            // Salva a preferência do usuário
-            if (htmlElement.classList.contains('dark')) {
-                localStorage.setItem('darkMode', 'true');
-            } else {
-                localStorage.setItem('darkMode', 'false');
-            }
+            localStorage.setItem('darkMode', htmlElement.classList.contains('dark') ? 'true' : 'false');
         });
 
-        // --- INÍCIO: LÓGICA DO SELETOR DE CORES ---
+        // LÓGICA DO SELETOR DE CORES
         const colorPicker = document.getElementById("colorPicker");
-        const calculatorElement = document.querySelector(".calculator"); // Referência ao elemento da calculadora se precisar
-        const styleTagId = "custom-theme-styles"; // ID para a tag de estilo dinâmica
+        const styleTagId = "custom-theme-styles";
 
-        // Função para aplicar a cor do tema
         function applyThemeColor(color) {
-            // Criar versões mais claras e escuras da cor selecionada
-            const lighterColor = adjustColorBrightness(color, 40); // Mais claro para botões de operação
-            const darkerColor = adjustColorBrightness(color, -20);  // Mais escuro para bordas
+            const lighterColor = adjustColorBrightness(color, 40);
+            const darkerColor = adjustColorBrightness(color, -20);
+            const focusRingColor = adjustColorBrightness(color, 10);
 
-            // Aplicar às classes dos botões
-            // Botão de Igual (cor principal)
             document.querySelectorAll(".btn-equals").forEach(btn => {
                 btn.style.backgroundColor = color;
                 btn.style.borderColor = darkerColor;
-                // Para manter o contraste do texto, podemos decidir a cor do texto baseado no brilho da cor de fundo
                 btn.style.color = getContrastYIQ(color);
             });
             
-            // Botões de Operação (cor mais clara)
             document.querySelectorAll(".btn-op").forEach(btn => {
                 btn.style.backgroundColor = lighterColor;
                 btn.style.borderColor = color;
                 btn.style.color = getContrastYIQ(lighterColor);
             });
             
-            // Aplicar ao foco dos elementos (usando variável CSS)
-            document.documentElement.style.setProperty('--theme-color-focus', color);
-
-            // Adicionar/atualizar estilos para o foco dinamicamente
             let styleTag = document.getElementById(styleTagId);
             if (!styleTag) {
                 styleTag = document.createElement('style');
                 styleTag.id = styleTagId;
                 document.head.appendChild(styleTag);
             }
-            // Usamos !important com cautela, apenas se necessário para sobrescrever Tailwind
             styleTag.innerHTML = `
                 .button:focus {
-                    --tw-ring-color: ${color} !important; 
+                    --tw-ring-color: ${focusRingColor} !important;
+                    --tw-ring-offset-width: 1px;
                 }
-                #screen:focus {
-                    --tw-ring-color: ${color} !important;
+                .screen-container:focus-within {
+                    --tw-ring-color: ${focusRingColor} !important;
+                    --tw-ring-offset-width: 1px;
                 }
                 #darkModeToggle:focus {
-                     --tw-ring-color: ${color} !important;
+                     --tw-ring-color: ${focusRingColor} !important;
+                     --tw-ring-offset-width: 1px;
+                }
+                #colorPicker:focus-visible {
+                    outline: 2px solid ${focusRingColor};
+                    outline-offset: 1px;
+                }
+                .result {
+                    color: ${adjustColorBrightness(color, -30)};
+                }
+                .dark .result {
+                    color: ${adjustColorBrightness(color, 70)};
                 }
             `;
         }
 
-        // Função auxiliar para ajustar o brilho de uma cor hexadecimal
         function adjustColorBrightness(hex, percent) {
             hex = hex.replace(/^#/, '');
-            if (hex.length === 3) {
-                hex = hex.split('').map(char => char + char).join('');
-            }
-
+            if (hex.length === 3) hex = hex.split('').map(char => char + char).join('');
             let r = parseInt(hex.substring(0, 2), 16);
             let g = parseInt(hex.substring(2, 4), 16);
             let b = parseInt(hex.substring(4, 6), 16);
-
             r = Math.max(0, Math.min(255, Math.round(r * (1 + percent / 100))));
             g = Math.max(0, Math.min(255, Math.round(g * (1 + percent / 100))));
             b = Math.max(0, Math.min(255, Math.round(b * (1 + percent / 100))));
-            
             const toHex = c => ('0' + c.toString(16)).slice(-2);
             return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
         }
         
-        // Função para obter cor de texto contrastante (branco ou preto)
         function getContrastYIQ(hexcolor){
             hexcolor = hexcolor.replace("#", "");
             var r = parseInt(hexcolor.substr(0,2),16);
             var g = parseInt(hexcolor.substr(2,2),16);
             var b = parseInt(hexcolor.substr(4,2),16);
             var yiq = ((r*299)+(g*587)+(b*114))/1000;
-            return (yiq >= 128) ? '#000000' : '#FFFFFF';
+            return (yiq >= 128 || hexcolor.toLowerCase() === 'ffffff') ? '#000000' : '#FFFFFF';
         }
 
-
-        // Verificar se há uma cor salva no localStorage ao carregar a página
         document.addEventListener("DOMContentLoaded", function() {
             const savedColor = localStorage.getItem("calculatorThemeColor");
-            const defaultColor = "#64748b"; // Cor padrão se nada estiver salvo
-
-            if (savedColor) {
-                colorPicker.value = savedColor;
-                applyThemeColor(savedColor);
-            } else {
-                colorPicker.value = defaultColor; // Define o valor do picker para o padrão
-                applyThemeColor(defaultColor); // Aplica a cor padrão inicialmente
-            }
+            const defaultColor = "#64748b"; 
+            const initialColor = savedColor || defaultColor;
+            colorPicker.value = initialColor;
+            applyThemeColor(initialColor);
         });
 
-        // Aplicar a cor enquanto o usuário seleciona (live update)
         colorPicker.addEventListener("input", function(event) {
-            const selectedColor = event.target.value;
-            applyThemeColor(selectedColor);
+            applyThemeColor(event.target.value);
         });
 
-        // Salvar a cor quando o usuário finalizar a seleção (soltar o mouse ou fechar o picker)
         colorPicker.addEventListener("change", function(event) {
-            const selectedColor = event.target.value;
-            localStorage.setItem("calculatorThemeColor", selectedColor);
+            localStorage.setItem("calculatorThemeColor", event.target.value);
         });
-        // --- FIM: LÓGICA DO SELETOR DE CORES ---
 
+        // Teste automático da calculadora
+        function runTest() {
+            console.log("Iniciando teste da calculadora...");
+            
+            // Testes básicos
+            const tests = [
+                { expr: "2+3", expected: 5 },
+                { expr: "5-2", expected: 3 },
+                { expr: "3*4", expected: 12 },
+                { expr: "10/2", expected: 5 },
+                { expr: "10%50", expected: 5 }, // 10% de 50
+                
+                // Testes de hierarquia
+                { expr: "2+3*4", expected: 14 }, // Multiplicação antes da adição
+                { expr: "10-2*3", expected: 4 }, // Multiplicação antes da subtração
+                { expr: "2*3+4*5", expected: 26 }, // Multiplicações antes das adições
+                { expr: "20/4+3*2", expected: 11 }, // Divisão e multiplicação antes da adição
+                
+                // Testes com números negativos
+                { expr: "-5+10", expected: 5 },
+                { expr: "10*-2", expected: -20 },
+                
+                // Testes com decimais
+                { expr: "2.5+3.5", expected: 6 },
+                { expr: "5.5*2", expected: 11 },
+                
+                // Testes complexos
+                { expr: "2+3*4-5/5", expected: 13 }, // 2+(3*4)-(5/5) = 2+12-1 = 13
+                { expr: "10%50+2*3", expected: 11 } // (10% de 50) + (2*3) = 5 + 6 = 11
+            ];
+            
+            let passed = 0;
+            
+            for (const test of tests) {
+                try {
+                    const result = evaluateExpression(test.expr);
+                    const success = Math.abs(result - test.expected) < 0.0001; // Tolerância para erros de ponto flutuante
+                    
+                    console.log(
+                        `Teste "${test.expr}": ${success ? "PASSOU" : "FALHOU"} - Resultado: ${result}, Esperado: ${test.expected}`
+                    );
+                    
+                    if (success) passed++;
+                } catch (e) {
+                    console.log(`Teste "${test.expr}": ERRO - ${e.message}`);
+                }
+            }
+            
+            console.log(`Testes concluídos: ${passed}/${tests.length} passaram`);
+        }
+        
+        // Executa o teste automaticamente
+        setTimeout(runTest, 1000);
     </script>
 </body>
 </html>

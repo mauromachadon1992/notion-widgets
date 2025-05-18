@@ -49,9 +49,8 @@
     }
 
     .clock {
-      width: 90vw;
-      max-width: 100vh;
-      height: 44vh;
+      width: 99vw;
+      height: 99vh;
       display: flex;
       gap: 3px;
       position: relative;
@@ -253,16 +252,16 @@
   <div class="clock-container">
     <div class="clock">
       <div class="digit-panel w-1/2">
-        <span id="hours" class="time-text font-extrabold font-mono text-[11rem] md:text-[16rem] lg:text-[18rem]">12</span>
+        <span id="hours" class="time-text font-extrabold font-mono text-[11rem] md:text-[16rem] lg:text-[20rem]">12</span>
         <div class="divider-line"></div>
         <div class="indicator font-mono bottom-3 left-6" id="ampm">PM</div>
       </div>
       <div class="digit-panel w-1/2">
-        <span id="minutes" class="time-text font-extrabold font-mono text-[11rem] md:text-[16rem] lg:text-[18rem]">23</span>
+        <span id="minutes" class="time-text font-extrabold font-mono text-[11rem] md:text-[16rem] lg:text-[20rem]">23</span>
         <div class="divider-line"></div>
         <div class="indicator font-mono bottom-3 right-6" id="day">SUNDAY</div>
       </div>
-      <div class="icon-container">
+      <div class="icon-container pr-3 pt-3">
         <div class="theme-toggle">
           <i class="fas fa-moon dark:hidden"></i>
           <i class="fas fa-sun hidden dark:inline"></i>
@@ -330,6 +329,9 @@
             <label for="textColor">Text Color:</label>
             <input type="color" id="textColor" value="#000000">
             <span id="textColorValue" class="color-value">#000000</span>
+          </div>
+          <div>
+            <h6><small>Created By <a class="text-pink-700 dark:text-pink-500"href="https://www.etsy.com/shop/AgencySquareDesigns?ref=seller-widget" target="_blank">Square Designs</a></small></h6>
           </div>
         </div>
       </div>

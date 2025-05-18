@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relógio Digital Responsivo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      transition: background-color 0.3s ease;
+    }
+
+    .dark {
+      background-color: #1a1a1a;
+      color: #f5f5f5;
+    }
+
+    .font-mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .font-bebas {
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    .font-sans {
+      font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    .font-serif {
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    }
+
+    .clock-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .clock {
+      width: 90vw;
+      max-width: 100vh;
+      height: 44vh;
+      display: flex;
+      gap: 3px;
+      position: relative;
+    }
+
+    .digit-panel {
+      background-color: rgb(232, 232, 232);
+      border-radius: 1rem;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dark .digit-panel {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .time-text {
+      line-height: 1;
+      transition: color 0.3s ease;
+    }
+
+    .divider-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .dark .divider-line {
+      background-color: #555;
+    }
+
+    .indicator {
+      position: absolute;
+      transition: color 0.3s ease;
+    }
+
+    .icon-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .clock:hover .icon-container {
+      opacity: 1;
+    }
+
+    .config-icon, .theme-toggle {
+      font-size: 24px;
+      color: #666;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .dark .config-icon, .dark .theme-toggle {
+      color: #aaa;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dark .modal-content {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .dark .modal-header {
+      border-bottom: 1px solid #555;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    .dark .close:hover {
+      color: #fff;
+    }
+
+    .font-option, .time-format-option {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+
+    .font-option input, .time-format-option input {
+      margin-right: 10px;
+    }
+
+    .section-divider {
+      height: 1px;
+      background-color: #ddd;
+      margin: 20px 0;
+    }
+
+    .dark .section-divider {
+      background-color: #555;
+    }
+
+    .color-picker-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .color-picker-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      width: 50px;
+      height: 30px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 4px;
+    }
+
+    .color-value {
+      font-family: monospace;
+      padding: 2px 6px;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .dark .color-value {
+      background-color: #444;
+    }
+  </style>
+  <script>
+    // Verifica preferência de tema salva
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+</head>
+
+<body class="bg-transparent">
+  <div class="clock-container">
+    <div class="clock">
+      <div class="digit-panel w-1/2">
+        <span id="hours" class="time-text font-extrabold font-mono text-[11rem] md:text-[16rem] lg:text-[18rem]">12</span>
+        <div class="divider-line"></div>
+        <div class="indicator font-mono bottom-3 left-6" id="ampm">PM</div>
+      </div>
+      <div class="digit-panel w-1/2">
+        <span id="minutes" class="time-text font-extrabold font-mono text-[11rem] md:text-[16rem] lg:text-[18rem]">23</span>
+        <div class="divider-line"></div>
+        <div class="indicator font-mono bottom-3 right-6" id="day">SUNDAY</div>
+      </div>
+      <div class="icon-container">
+        <div class="theme-toggle">
+          <i class="fas fa-moon dark:hidden"></i>
+          <i class="fas fa-sun hidden dark:inline"></i>
+        </div>
+        <div class="config-icon">
+          <i class="fas fa-cog"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para configurações -->
+  <div id="configModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="text-lg font-bold">Custom Config</h3>
+        <span class="close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <h4 class="font-medium mb-2">Font Family:</h4>
+        <div class="font-option">
+          <input type="radio" id="fontMono" name="fontOption" value="mono">
+          <label for="fontMono" class="font-mono">Mono</label>
+        </div>
+        <div class="font-option">
+          <input type="radio" id="fontBebas" name="fontOption" value="bebas">
+          <label for="fontBebas" class="font-bebas">Bebas Neue</label>
+        </div>
+        <div class="font-option">
+          <input type="radio" id="fontSans" name="fontOption" value="sans">
+          <label for="fontSans" class="font-sans">Sans</label>
+        </div>
+        <div class="font-option">
+          <input type="radio" id="fontSerif" name="fontOption" value="serif">
+          <label for="fontSerif" class="font-serif">Serif</label>
+        </div>
+        
+        <div class="section-divider"></div>
+        
+        <h4 class="font-medium mb-2">Time Format:</h4>
+        <div class="time-format-option">
+          <input type="radio" id="format12h" name="timeFormat" value="12h">
+          <label for="format12h">12 Hours (AM/PM)</label>
+        </div>
+        <div class="time-format-option">
+          <input type="radio" id="format24h" name="timeFormat" value="24h">
+          <label for="format24h">24 Hours</label>
+        </div>
+        <div class="time-format-option">
+          <input type="radio" id="formatSystem" name="timeFormat" value="system">
+          <label for="formatSystem">System Date Format</label>
+        </div>
+        
+        <div class="section-divider"></div>
+        
+        <div class="color-picker-container">
+          <h4 class="font-medium mb-2">Colors:</h4>
+          <div class="color-picker-label">
+            <label for="panelColor">Panel Color:</label>
+            <input type="color" id="panelColor" value="#e8e8e8">
+            <span id="panelColorValue" class="color-value">#e8e8e8</span>
+          </div>
+          
+          <div class="color-picker-label">
+            <label for="textColor">Text Color:</label>
+            <input type="color" id="textColor" value="#000000">
+            <span id="textColorValue" class="color-value">#000000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elementos do DOM
+    const timeTexts = document.querySelectorAll('.time-text');
+    const indicators = document.querySelectorAll('.indicator');
+    const digitPanels = document.querySelectorAll('.digit-panel');
+    const configIcon = document.querySelector('.config-icon');
+    const themeToggle = document.querySelector('.theme-toggle');
+    const modal = document.getElementById('configModal');
+    const closeBtn = document.querySelector('.close');
+    const fontOptions = document.querySelectorAll('input[name="fontOption"]');
+    const timeFormatOptions = document.querySelectorAll('input[name="timeFormat"]');
+    const panelColorPicker = document.getElementById('panelColor');
+    const textColorPicker = document.getElementById('textColor');
+    const panelColorValue = document.getElementById('panelColorValue');
+    const textColorValue = document.getElementById('textColorValue');
+    const ampmElement = document.getElementById('ampm');
+
+    // Detecta o formato de hora preferido do sistema do usuário
+    function detectUserHourFormat() {
+      try {
+        const format = new Intl.DateTimeFormat(undefined, { hour: 'numeric' }).resolvedOptions().hourCycle;
+        return format.startsWith('h12') ? '12h' : '24h';
+      } catch (e) {
+        // Fallback para 12h se não conseguir detectar
+        return '12h';
+      }
+    }
+
+    // Função para atualizar o relógio
+    function updateClock() {
+      const now = new Date();
+      const timeFormat = localStorage.getItem('timeFormat') || 'system';
+      
+      // Determina o formato real a ser usado
+      let actualFormat = timeFormat;
+      if (timeFormat === 'system') {
+        actualFormat = detectUserHourFormat();
+      }
+      
+      // Atualiza a hora
+      let hours = now.getHours();
+      let displayHours = hours;
+      
+      if (actualFormat === '12h') {
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        displayHours = hours % 12;
+        displayHours = displayHours ? displayHours : 12; // Converte 0 para 12
+        ampmElement.textContent = ampm;
+        ampmElement.style.display = 'block';
+      } else {
+        // Formato 24h
+        ampmElement.style.display = 'none';
+      }
+      
+      document.getElementById('hours').textContent = displayHours.toString().padStart(2, '0');
+      
+      // Atualiza os minutos
+      const minutes = now.getMinutes();
+      document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+      
+      // Atualiza o dia da semana
+      const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+      const day = days[now.getDay()];
+      document.getElementById('day').textContent = day;
+    }
+
+    // Função para aplicar a fonte selecionada
+    function applyFont(fontType) {
+      // Primeiro remove todas as classes de fonte
+      timeTexts.forEach(el => {
+        el.classList.remove('font-mono', 'font-bebas', 'font-sans', 'font-serif');
+      });
+      indicators.forEach(el => {
+        el.classList.remove('font-mono', 'font-bebas', 'font-sans', 'font-serif');
+      });
+      
+      // Depois adiciona a classe da fonte selecionada
+      const fontClass = `font-${fontType}`;
+      timeTexts.forEach(el => {
+        el.classList.add(fontClass);
+      });
+      indicators.forEach(el => {
+        el.classList.add(fontClass);
+      });
+    }
+
+    // Função para aplicar as cores selecionadas
+    function applyColors(panelColor, textColor) {
+      digitPanels.forEach(panel => {
+        panel.style.backgroundColor = panelColor;
+        panel.style.color = textColor;
+      });
+    }
+
+    // Função para alternar entre modo claro e escuro
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      localStorage.setItem('darkMode', isDarkMode);
+      
+      // Atualiza os ícones de tema
+      if (isDarkMode) {
+        document.querySelector('.fa-moon').classList.add('hidden');
+        document.querySelector('.fa-sun').classList.remove('hidden');
+      } else {
+        document.querySelector('.fa-moon').classList.remove('hidden');
+        document.querySelector('.fa-sun').classList.add('hidden');
+      }
+    }
+
+    // Função para salvar configurações no localStorage
+    function saveSettings(fontType, timeFormat, panelColor, textColor) {
+      if (fontType) localStorage.setItem('clockFont', fontType);
+      if (timeFormat) localStorage.setItem('timeFormat', timeFormat);
+      if (panelColor) localStorage.setItem('panelColor', panelColor);
+      if (textColor) localStorage.setItem('textColor', textColor);
+    }
+
+    // Função para carregar configurações do localStorage
+    function loadSettings() {
+      const savedFont = localStorage.getItem('clockFont');
+      const savedTimeFormat = localStorage.getItem('timeFormat');
+      const savedPanelColor = localStorage.getItem('panelColor');
+      const savedTextColor = localStorage.getItem('textColor');
+      
+      // Aplica a fonte salva
+      if (savedFont) {
+        applyFont(savedFont);
+        
+        // Atualiza o radio button selecionado
+        fontOptions.forEach(option => {
+          if (option.value === savedFont) {
+            option.checked = true;
+          }
+        });
+      } else {
+        // Configuração padrão: fonte mono
+        document.getElementById('fontMono').checked = true;
+      }
+      
+      // Aplica o formato de hora salvo
+      if (savedTimeFormat) {
+        timeFormatOptions.forEach(option => {
+          if (option.value === savedTimeFormat) {
+            option.checked = true;
+          }
+        });
+      } else {
+        // Configuração padrão: usar formato do sistema
+        document.getElementById('formatSystem').checked = true;
+        localStorage.setItem('timeFormat', 'system');
+      }
+      
+      // Aplica as cores salvas
+      if (savedPanelColor) {
+        panelColorPicker.value = savedPanelColor;
+        panelColorValue.textContent = savedPanelColor;
+      }
+      
+      if (savedTextColor) {
+        textColorPicker.value = savedTextColor;
+        textColorValue.textContent = savedTextColor;
+      }
+      
+      // Aplica as cores salvas ou padrão
+      applyColors(
+        savedPanelColor || '#e8e8e8',
+        savedTextColor || '#000000'
+      );
+    }
+
+    // Event listeners para o modal
+    configIcon.addEventListener('click', () => {
+      modal.style.display = 'block';
+    });
+
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Event listener para o botão de tema
+    themeToggle.addEventListener('click', toggleDarkMode);
+
+    // Event listeners para as opções de fonte
+    fontOptions.forEach(option => {
+      option.addEventListener('change', (e) => {
+        const fontType = e.target.value;
+        applyFont(fontType);
+        saveSettings(fontType);
+      });
+    });
+
+    // Event listeners para as opções de formato de hora
+    timeFormatOptions.forEach(option => {
+      option.addEventListener('change', (e) => {
+        const timeFormat = e.target.value;
+        saveSettings(null, timeFormat);
+        updateClock(); // Atualiza o relógio imediatamente
+      });
+    });
+
+    // Event listeners para os seletores de cor
+    panelColorPicker.addEventListener('input', (e) => {
+      const color = e.target.value;
+      panelColorValue.textContent = color;
+      applyColors(color, textColorPicker.value);
+    });
+
+    panelColorPicker.addEventListener('change', (e) => {
+      const color = e.target.value;
+      saveSettings(null, null, color);
+    });
+
+    textColorPicker.addEventListener('input', (e) => {
+      const color = e.target.value;
+      textColorValue.textContent = color;
+      applyColors(panelColorPicker.value, color);
+    });
+
+    textColorPicker.addEventListener('change', (e) => {
+      const color = e.target.value;
+      saveSettings(null, null, null, color);
+    });
+
+    // Inicializa o relógio e carrega as configurações
+    loadSettings();
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Ajusta o tamanho do texto responsivamente
+    function adjustTextSize() {
+      const clockWidth = document.querySelector('.clock').offsetWidth;
+      const indicators = document.querySelectorAll('.indicator');
+      
+      // Ajusta tamanho dos indicadores (AM/PM e dia)
+      const indicatorSize = Math.max(Math.min(clockWidth * 0.05, 24), 12);
+      indicators.forEach(indicator => {
+        indicator.style.fontSize = `${indicatorSize}px`;
+      });
+    }
+    
+    // Ajusta tamanhos ao carregar e redimensionar
+    window.addEventListener('load', adjustTextSize);
+    window.addEventListener('resize', adjustTextSize);
+  </script>
+</body>
+
+</html>
